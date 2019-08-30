@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title><![CDATA[深入理解JVM（一）]]></title>
+    <url>%2F2019%2F08%2F30%2F%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%EF%BC%88%E4%B8%80%EF%BC%89%2F</url>
+    <content type="text"><![CDATA[深入理解 JVM课程参考：http://www.iprogramming.cn 类加载Java 中类型的加载、连接和初始化过程都是在程序运行期间完成。 类型：类本身而不是实例化的对象。 加载：类的class文件从磁盘加载到内存中。 将.class文件中的二进制数据读入到内存中，放入运行时数据区的方法区内，然后在内存中创建一个java.lang.Class对象，用来封装在方法区内的数据结构。 连接：将类与类之间的关系确定好，检验字节码文件。 验证：类的正确性。 准备：类的静态变量分配内存，初始化为默认值。 解析：类中符号引用转为直接引用。 初始化：类的静态变量赋予正确的初始值，首次主动使用。 类加载器作用：将类加载到内存。 类的使用与卸载 使用 卸载 类的使用方式 主动使用 创建类的实例 访问某个类或接口静态变量或赋值 调用类的静态方法 反射 初始化一个类的子类 启动类的类 动态语言的支持 被动使用 不会导致类的初始化 1234567891011121314151617181920public class MyTest1 &#123; public static void main(String[] args) &#123; System.out.println(Child.str1); &#125;&#125;class Parent&#123; static String str1 = "123"; static &#123; System.out.println("Parent static block"); &#125;&#125;class Child extends Parent&#123; static String str2 = "234"; static &#123; System.out.println("child static block"); &#125;&#125; 结果 12Parent static block123 分析 对于静态字段来说，只有直接定义了该字段的类才会被初始化 1234567891011121314151617181920public class MyTest1 &#123; public static void main(String[] args) &#123; System.out.println(Child.str2); &#125;&#125;class Parent&#123; static String str1 = "123"; static &#123; System.out.println("Parent static block"); &#125;&#125;class Child extends Parent&#123; static String str2 = "234"; static &#123; System.out.println("child static block"); &#125;&#125; 结果 123Parent static blockchild static block234 分析 当一个类初始化时，要求其父类全部初始化完毕。]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>JVM</tag>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[浅谈Java多线程操作（一）]]></title>
+    <url>%2F2019%2F08%2F24%2Fthread%2F</url>
+    <content type="text"><![CDATA[线程线程基本概念线程是 CPU 调度的基本单位，进程是 CPU 分配资源的基本单位。 Java 中的多线程Java 中创建多线程的两种方式 通过继承Thread类，并重写run方法创建线程 1234567class MyThread extends Thread&#123; @Override public void run() &#123; System.out.println("hello thread!"); &#125;&#125; 通过实现Runnable接口，并传递给Thread类，创建线程。 1234567class MyThread2 implements Runnable&#123; @Override public void run() &#123; System.out.println("hello thread2!"); &#125;&#125; Java 中的线程生命周期 线程新建状态 使用 Java 创建线程的两种方法，创建一个新的线程。 线程就绪状态 通过调用新线程的start()方法使之进入就绪状态 运行中的线程失去CPU运行时间进入就绪状态 阻塞状态的线程处理完阻塞进入就绪状态 线程运行状态 就绪状态的线程一旦获得CPU便进入运行状态 线程阻塞状态 使用线程的sleep()方法 运行状态中的线程执行wait()方法 线程死亡状态 线程生命周期结束 Java 线程同步Java 多个线程同时抢夺资源，造成冲突问题 123456789101112131415161718192021222324252627282930313233343536373839404142434445class Bank&#123; int i = 0; void add()&#123; i++; &#125; int getI()&#123; return i; &#125;&#125;class MyThread extends Thread&#123; Bank bank; MyThread(Bank b)&#123; bank = b; &#125; @Override public void run() &#123; for(int x = 0; x &lt; 10; x++) &#123; bank.add(); System.out.println(Thread.currentThread().getName() + " value: " +bank.getI()); &#125; &#125; &#125;public class Demo &#123; public static void main(String[] args) &#123; Bank bank = new Bank(); MyThread myThread = new MyThread(bank); myThread.start(); MyThread myThread2 = new MyThread(bank); myThread2.start(); MyThread myThread3 = new MyThread(bank); myThread3.start(); &#125;&#125; 运行结果： 12345Thread-0 value: 2Thread-0 value: 4Thread-2 value: 3Thread-1 value: 2Thread-2 value: 6 同步方法 使用synchronized关键字 由于 Java 的每个对象都有一个内置锁，当用此关键字修饰方法时，内置锁会保护整个方法。在调用该方法前，需要获得内置锁，否则就处于阻塞状态。 123public synchronized void add()&#123; i++; &#125; 同步代码块 有synchronized关键字修饰的语句块，被该关键字修饰的语句块会自动被加上内置锁，从而实现同步。必须使用同一个锁。 12345public void add()&#123; synchronized (this) &#123; i++; &#125; &#125; 使用特殊域变量(volatile)实现线程同步 volatile具有synchronized关键字的“可见性”，但是没有synchronized关键字的“并发正确性”，也就是说不保证线程执行的有序性。 volatile变量对于每次使用，线程都能得到当前volatile变量的最新值。但是volatile变量并不保证并发的正确性。 1volatile int i = 0; https://www.hollischuang.com/archives/2648 使用重入锁（Lock）实现线程同步 123ReentrantLock() : 创建一个ReentrantLock实例 lock() : 获得锁 unlock() : 释放锁 123456789class Bank&#123; volatile int i = 0; private Lock lock = new ReentrantLock(); void add()&#123; lock.lock(); i++; lock.unlock(); &#125;]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>thread</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Hello World]]></title>
+    <url>%2F2019%2F08%2F23%2Fhello-world%2F</url>
+    <content type="text"><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>test</tag>
+      </tags>
+  </entry>
+</search>
