@@ -281,6 +281,735 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/20/并发(二) /">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chazdada">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaz Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/11/20/并发(二) /" itemprop="url">并发（二）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-11-20T21:09:44+08:00">
+                2019-11-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="并发（二）"><a href="#并发（二）" class="headerlink" title="并发（二）"></a>并发（二）</h2><h3 id="并发编程常见问题"><a href="#并发编程常见问题" class="headerlink" title="并发编程常见问题"></a>并发编程常见问题</h3><h4 id="安全性问题"><a href="#安全性问题" class="headerlink" title="安全性问题"></a>安全性问题</h4><p>正确性：程序按我们期望的顺序执行。</p>
+<p>需要仔细检查的情况：存在共享数据并且该数据会发生变化，通俗地讲就是有多个线程会同时读写同一数据。</p>
+<p>数据竞争：当多个线程同时访问同一数据，并且至少有一个线程会写这个数据的时候，如果我们不采取防护措施，那么就会导致并发 Bug。</p>
+<p>竞态条件：指的是程序的执行结果依赖线程执行的顺序。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">long</span> count = <span class="number">0</span>;</span><br><span class="line">	<span class="function"><span class="keyword">synchronized</span> <span class="keyword">long</span> <span class="title">get</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> count；</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(<span class="keyword">long</span> v)</span></span>&#123;</span><br><span class="line">		count = v;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">add10K</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> idx = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">while</span>(idx++ &lt; <span class="number">10000</span>) &#123;</span><br><span class="line">			set(get()+<span class="number">1</span>)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="活跃性问题"><a href="#活跃性问题" class="headerlink" title="活跃性问题"></a>活跃性问题</h4><p>活跃性问题，指的是某个操作无法执行下去。</p>
+<ul>
+<li>死锁</li>
+<li>活锁：有时线程虽然没有发生阻塞，但仍然会存在执行不下去的情况<ul>
+<li>可能会一直没完没了地“谦让”下去，成为没有发生阻塞但依然执行不下去的“活锁”。解决“活锁”的方案很简单，谦让时，尝试等待一个随机的时间就可以了。</li>
+</ul>
+</li>
+<li>饥饿：指的是线程因无法访问所需资源而无法执行下去的情况。<ul>
+<li>保证资源充足</li>
+<li>公平地分配资源</li>
+<li>避免持有锁的线程长时间执行</li>
+</ul>
+</li>
+</ul>
+<h4 id="性能问题"><a href="#性能问题" class="headerlink" title="性能问题"></a>性能问题</h4><p>使用“锁”要非常小心，但是如果小心过度，也可能出“性能问题”。“锁”的过度使用可能导致串行化的范围过大，这样就不能够发挥多线程的优势了，而我们之所以使用多线程搞并发程序，为的就是提升性能。</p>
+<ul>
+<li><p>既然使用锁会带来性能问题，那最好的方案自然就是使用无锁的算法和数据结构了。在这方面有很多相关的技术，例如线程本地存储 (Thread Local Storage, TLS)、写入时复制 (Copy-on-write)、乐观锁等；Java 并发包里面的原子类也是一种无锁的数据结构；Disruptor 则是一个无锁的内存队列，性能都非常好……</p>
+</li>
+<li><p>减少锁持有的时间。互斥锁本质上是将并行的程序串行化，所以要增加并行度，一定要减少持有锁的时间。这个方案具体的实现技术也有很多，例如使用细粒度的锁，一个典型的例子就是 Java 并发包里的 ConcurrentHashMap，它使用了所谓分段锁的技术；还可以使用读写锁，也就是读是无锁的，只有写的时候才会互斥。</p>
+</li>
+</ul>
+<p>性能方面的度量指标有很多，我觉得有三个指标非常重要，就是：吞吐量、延迟和并发量。</p>
+<ul>
+<li>吞吐量：指的是单位时间内能处理的请求数量。吞吐量越高，说明性能越好。</li>
+<li>延迟：指的是从发出请求到收到响应的时间。延迟越小，说明性能越好。</li>
+<li>并发量：指的是能同时处理的请求数量，一般来说随着并发量的增加、延迟也会增加。所以延迟这个指标，一般都会是基于并发量来说的。例如并发量是 1000 的时候，延迟是 50 毫秒。</li>
+</ul>
+<h3 id="管程"><a href="#管程" class="headerlink" title="管程"></a>管程</h3><p>管程，指的是管理共享变量以及对共享变量的操作过程，让他们支持并发。</p>
+<p>三种不同的管程模型， Hasen 模型、Hoare 模型 和 MESA 模型。其中，现在广泛应用的是 MESA 模型，并且 <strong>Java 管程的实现参考的也是 MESA 模型</strong>。 </p>
+<p>管程解决互斥和同步问题：</p>
+<ul>
+<li>互斥：即同一时刻只允许一个线程访问共享资源 <ul>
+<li>就是将共享变量及其对共享变量的操作统一封装起来。 </li>
+</ul>
+</li>
+<li>同步： 即线程之间如何通信、协作 <ul>
+<li>条件变量和等待队列</li>
+<li>假设有个线程 T1 执行出队操作，不过需要注意的是执行出队操作，有个前提条件，就是队列不能是空的，而队列不空这个前提条件就是管程里的条件变量。 如果线程 T1 进入管程 后恰好发现队列是空的，就去条件变量对应的等待队列 里面等。此时线程 T1 就去“队列不空”这个条件变量的等待队列中等待。线程 T1 进入条件变量的等待队列后，是允许其他线程进入管程的。 再假设之后另外一个线程 T2 执行入队操作，入队操作执行成功之后，“队列不空”这个条 件对于线程 T1 来说已经满足了，此时线程 T2 要通知 T1，告诉它需要的条件已经满足了。当线程 T1 得到通知后，会从等待队列里面出来，但是出来之后不是马上执行，而是重新进 入到入口等待队列里面。前面提到线程 T1 发现“队列不空”这个条件不满足，需要进到对应的等待队列里等 待。这个过程就是通过调用 wait() 来实现的。如果我们用对象 A 代表“队列不空”这个条 件，那么线程 T1 需要调用 A.wait()。同理当“队列不空”这个条件满足时，线程 T2 需要 调用 A.notify() 来通知 A 等待队列中的一个线程，此时这个队列里面只有线程 T1。至于 notifyAll() 这个方法，它可以通知等待队列中的所有线程。  </li>
+</ul>
+</li>
+</ul>
+<p>管程要求同一时刻只允许一个线程执行，那当线程 T2 的操作使线程 T1 等待的条件满足时，T1 和 T2 究竟谁可以执行呢？  </p>
+<ul>
+<li>Hasen 模型里面，要求 notify() 放在代码的最后，这样 T2 通知完 T1 后，T2 就结束了，然后 T1 再执行，这样就能保证同一时刻只有一个线程执行。 </li>
+<li>Hoare 模型里面，T2 通知完 T1 后，T2 阻塞，T1 马上执行；等 T1 执行完，再唤醒 T2，也能保证同一时刻只有一个线程执行。但是相比 Hasen 模型，T2 多了一次阻塞唤 醒操作。</li>
+<li>MESA 管程里面，T2 通知完 T1 后，T2 还是会接着执行，T1 并不立即执行，仅仅是从条件变量的等待队列进到入口等待队列里面。这样做的好处是 notify() 不用放到代码的最后，T2 也没有多余的阻塞唤醒操作。但是也有个副作用，就是当 T1 再次执行的时 候，可能曾经满足的条件，现在已经不满足了，所以需要以循环方式检验条件变量。 </li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BlockedQueue</span>&lt;<span class="title">T</span>&gt;</span>&#123;</span><br><span class="line"> 	<span class="keyword">final</span> Lock lock =</span><br><span class="line"> 		<span class="keyword">new</span> ReentrantLock();</span><br><span class="line"> 	<span class="comment">// 条件变量：队列不满</span></span><br><span class="line"> 	<span class="keyword">final</span> Condition notFull =</span><br><span class="line"> 		lock.newCondition();</span><br><span class="line"> 	<span class="comment">// 条件变量：队列不空</span></span><br><span class="line"> 	<span class="keyword">final</span> Condition notEmpty =</span><br><span class="line"> 		lock.newCondition();</span><br><span class="line"> 	<span class="comment">// 入队</span></span><br><span class="line"> 	<span class="function"><span class="keyword">void</span> <span class="title">enq</span><span class="params">(T x)</span> </span>&#123;</span><br><span class="line"> 		lock.lock();</span><br><span class="line"> 		<span class="keyword">try</span> &#123;</span><br><span class="line"> 			<span class="keyword">while</span> (队列已满)&#123;</span><br><span class="line"> 				<span class="comment">// 等待队列不满</span></span><br><span class="line"> 				notFull.await();</span><br><span class="line"> 			&#125;</span><br><span class="line"> 			<span class="comment">// 省略入队操作...</span></span><br><span class="line"> 			<span class="comment">// 入队后, 通知可出队</span></span><br><span class="line"> 			notEmpty.signal();</span><br><span class="line"> 		&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">			lock.unlock();</span><br><span class="line"> 		&#125;</span><br><span class="line"> 	&#125;</span><br><span class="line"> 	<span class="comment">// 出队</span></span><br><span class="line"> 	<span class="function"><span class="keyword">void</span> <span class="title">deq</span><span class="params">()</span></span>&#123;</span><br><span class="line"> 		lock.lock();</span><br><span class="line"> 		<span class="keyword">try</span> &#123;</span><br><span class="line"> 			<span class="keyword">while</span> (队列已空)&#123;</span><br><span class="line"> 				<span class="comment">// 等待队列不空</span></span><br><span class="line"> 				notEmpty.await();</span><br><span class="line"> 			&#125;</span><br><span class="line"> 				<span class="comment">// 省略出队操作...</span></span><br><span class="line"> 				<span class="comment">// 出队后，通知可入队</span></span><br><span class="line"> 				notFull.signal();</span><br><span class="line"> 			&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line"> 				lock.unlock();</span><br><span class="line">			 &#125;</span><br><span class="line"> 	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/18/机器学习（一）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chazdada">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaz Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/11/18/机器学习（一）/" itemprop="url">机器学习（一）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-11-18T14:17:33+08:00">
+                2019-11-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="机器学习（绪论-第一章）"><a href="#机器学习（绪论-第一章）" class="headerlink" title="机器学习（绪论+第一章）"></a>机器学习（绪论+第一章）</h2><h3 id="绪论"><a href="#绪论" class="headerlink" title="绪论"></a>绪论</h3><h4 id="机器学习定义"><a href="#机器学习定义" class="headerlink" title="机器学习定义"></a>机器学习定义</h4><p>定义：假设用P来评估计算机程序在某一任务T上的性能，若某一程序通过利用经验E在T中任务上获得了性能改善，则我们就说关于T和P，该程序对E进行了学习。</p>
+<h4 id="术语"><a href="#术语" class="headerlink" title="术语"></a>术语</h4><ul>
+<li><p>数据集</p>
+</li>
+<li><p>样本</p>
+</li>
+<li><p>属性或特征</p>
+</li>
+<li><p>训练集和测试集</p>
+</li>
+<li><p>分类</p>
+</li>
+<li><p>回归</p>
+</li>
+<li><p>聚类</p>
+</li>
+<li><p>监督学习和无监督学习</p>
+</li>
+<li><p>泛化能力</p>
+</li>
+<li><p>假设空间</p>
+<ul>
+<li>归纳：从特殊到一般</li>
+<li>演绎：从一般到特殊</li>
+</ul>
+</li>
+<li><p>归纳偏好</p>
+</li>
+<li><p>奥卡姆剃刀原则</p>
+</li>
+</ul>
+<h3 id="模型评估与选择"><a href="#模型评估与选择" class="headerlink" title="模型评估与选择"></a>模型评估与选择</h3><p>错误率 and 精度</p>
+<p>训练误差 and 泛化误差</p>
+<p>过拟合 and 欠拟合</p>
+<h4 id="评估方法"><a href="#评估方法" class="headerlink" title="评估方法"></a>评估方法</h4><ul>
+<li><p>留出法：分层采样</p>
+</li>
+<li><p>交叉验证</p>
+</li>
+<li><p>自助法</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/17/分布式（二）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chazdada">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaz Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/11/17/分布式（二）/" itemprop="url">分布式（二）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-11-17T16:29:36+08:00">
+                2019-11-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/分布式/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="分布式（二）"><a href="#分布式（二）" class="headerlink" title="分布式（二）"></a>分布式（二）</h2><h3 id="分布式互斥"><a href="#分布式互斥" class="headerlink" title="分布式互斥"></a>分布式互斥</h3><h4 id="集中式算法"><a href="#集中式算法" class="headerlink" title="集中式算法"></a>集中式算法</h4><p>引入一个协调者，将所有的请求者进行排序，最早请求的参与者可以使用临界资源</p>
+<p>优点：</p>
+<ul>
+<li>简单、易于实现</li>
+<li>通信高效</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>可用性低</li>
+<li>性能易受协调者影响</li>
+</ul>
+<p>应用场景：</p>
+<p>在协调者的可靠性和性能有一定保证的情况下，可以适用于比较广泛的场景</p>
+<h4 id="分布式算法"><a href="#分布式算法" class="headerlink" title="分布式算法"></a>分布式算法</h4><p>征求其他参与者同意后，可以使用资源</p>
+<p>优点：</p>
+<ul>
+<li>可用性比较高</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>通信成本高</li>
+<li>复杂度高</li>
+</ul>
+<p>应用场景：</p>
+<p>适合临界资源访问频率较低且规模较少的系统</p>
+<h4 id="令牌环算法"><a href="#令牌环算法" class="headerlink" title="令牌环算法"></a>令牌环算法</h4><p>所有参与者组成一个环，轮流使用临界资源</p>
+<p>优点：</p>
+<ul>
+<li>单个参与者通信效率较高</li>
+<li>可用性较高</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>当临界资源使用频率较低时，会带来较多无用通信</li>
+</ul>
+<p>适用场景：</p>
+<p>系统规模较小，并且系统中每个程序使用临界资源频率较高，且使用时间短的场景</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/16/MySQL技术内幕（二）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chazdada">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaz Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/11/16/MySQL技术内幕（二）/" itemprop="url">MySQL技术内幕（二）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-11-16T15:11:18+08:00">
+                2019-11-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/数据库/" itemprop="url" rel="index">
+                    <span itemprop="name">数据库</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="MySQL技术内幕（二）"><a href="#MySQL技术内幕（二）" class="headerlink" title="MySQL技术内幕（二）"></a>MySQL技术内幕（二）</h2><h3 id="文件"><a href="#文件" class="headerlink" title="文件"></a>文件</h3><h4 id="参数文件"><a href="#参数文件" class="headerlink" title="参数文件"></a>参数文件</h4><p>告诉MySQL实例启动时在哪里可以找到数据库文件，并指定某些初始化参数。</p>
+<p>show variables；</p>
+<p>参数类型：</p>
+<ul>
+<li>动态参数：在MySQL实例运行过程中可以修改</li>
+<li>静态参数：在整个实例的生命周期内不得修改</li>
+</ul>
+<h4 id="日志文件"><a href="#日志文件" class="headerlink" title="日志文件"></a>日志文件</h4><ul>
+<li>错误文件：MySQL启动、运行、关闭进行了记录，数据库优化</li>
+<li>慢查询日志：为SQL语句的优化带来帮助。设置long_query_time,将超过阈值的写入到慢查询日志</li>
+<li>查询日志：所有对MySQL数据库请求信息</li>
+<li>二进制日志：对数据库执行的更改操作。<ul>
+<li>恢复</li>
+<li>复制</li>
+</ul>
+</li>
+</ul>
+<h4 id="socket文件"><a href="#socket文件" class="headerlink" title="socket文件"></a>socket文件</h4><p>UNIX系统下连接数据库可以使用套接字</p>
+<h4 id="pid文件"><a href="#pid文件" class="headerlink" title="pid文件"></a>pid文件</h4><p>实例启动时，会把自己进程id写进到一个文件中</p>
+<h4 id="MySql表结构文件"><a href="#MySql表结构文件" class="headerlink" title="MySql表结构文件"></a>MySql表结构文件</h4><p>.frm文件</p>
+<h4 id="存储引擎文件"><a href="#存储引擎文件" class="headerlink" title="存储引擎文件"></a>存储引擎文件</h4><ul>
+<li>表空间文件<ul>
+<li>默认会初始化10MB，名为ibdata1的文件</li>
+<li>单独.ibd文件</li>
+</ul>
+</li>
+<li>重做日志文件<ul>
+<li>事务恢复</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/16/分布式（一）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1200,125 +1929,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/05/post-name/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chazdada">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chaz Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/10/05/post-name/" itemprop="url">post_name</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-05T19:30:05+08:00">
-                2019-10-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/05/数据库（二）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1472,535 +2082,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/数据库（一）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chazdada">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chaz Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/10/04/数据库（一）/" itemprop="url">数据库（一）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T15:15:12+08:00">
-                2019-10-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/数据库/" itemprop="url" rel="index">
-                    <span itemprop="name">数据库</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="数据库（一）"><a href="#数据库（一）" class="headerlink" title="数据库（一）"></a>数据库（一）</h2><h3 id="数据库概念"><a href="#数据库概念" class="headerlink" title="数据库概念"></a>数据库概念</h3><p>文件处理系统弊端：</p>
-<ul>
-<li>数据的冗余和不一致</li>
-<li>数据访问困难</li>
-<li>数据孤立</li>
-<li>完整性问题（约束）</li>
-<li>原子性问题（例如转账操作）</li>
-<li>并发访问异常</li>
-<li>安全性问题</li>
-</ul>
-<p>数据库系统 = 数据 + 修改数据的程序</p>
-<h4 id="数据视图"><a href="#数据视图" class="headerlink" title="数据视图"></a>数据视图</h4><p>抽象视图：隐藏数据存储和维护的细节</p>
-<h5 id="数据抽象"><a href="#数据抽象" class="headerlink" title="数据抽象"></a>数据抽象</h5><ul>
-<li>物理层：详细描述底层复杂结构</li>
-<li>逻辑层</li>
-<li>视图层</li>
-</ul>
-<h5 id="实例和模式"><a href="#实例和模式" class="headerlink" title="实例和模式"></a>实例和模式</h5><p>实例：存储在数据库信息的集合</p>
-<p>模式：数据库的总体设计</p>
-<ul>
-<li>物理模式</li>
-<li>逻辑模式</li>
-<li>子模式</li>
-</ul>
-<h5 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h5><p>数据模型是一种描述数据、数据联系、数据语义以及一致性约束的概念工具的集合。数据模型提供了一种描述物理层、逻辑层以及视图层数据库设计的方式。</p>
-<ul>
-<li>关系模型</li>
-<li>E-R模型</li>
-<li>基于对象的数据模型</li>
-<li>半结构化数据模型</li>
-</ul>
-<h4 id="数据库语言"><a href="#数据库语言" class="headerlink" title="数据库语言"></a>数据库语言</h4><ul>
-<li><p>数据操纵语言（DML）</p>
-<p>增删改查</p>
-</li>
-<li><p>数据定义语言（DDL）</p>
-<p>数据存储与定义</p>
-<ul>
-<li>域约束</li>
-<li>参照完整性</li>
-<li>断言</li>
-<li>授权</li>
-</ul>
-</li>
-</ul>
-<p>DDL的输出放入数据字典中，数据字典包含了元数据。</p>
-<h4 id="数据存储与查询"><a href="#数据存储与查询" class="headerlink" title="数据存储与查询"></a>数据存储与查询</h4><p>数据库系统的功能部件大致可以分为存储管理器和查询处理部件</p>
-<ul>
-<li><p>存储管理器：与操作系统文件系统交互</p>
-<ul>
-<li>权限及完整性管理器：完整性约束，用户权限</li>
-<li>事务管理器：事务的执行</li>
-<li>文件管理器：磁盘存储与分配</li>
-<li>缓冲区管理器：决定哪些数据从磁盘上转移到内存缓冲区中</li>
-</ul>
-<p>实现的数据结构：</p>
-<ul>
-<li>数据文件：数据库本身</li>
-<li>数据字典：数据库模式，元数据：数据的数据</li>
-<li>索引</li>
-</ul>
-</li>
-<li><p>查询处理器</p>
-<ul>
-<li>DDL解释器：解释DDL语句并记录在数据字典</li>
-<li>DML编译器：翻译成执行方案，产生低级指令</li>
-<li>查询执行引擎：执行低级指令</li>
-</ul>
-</li>
-</ul>
-<h4 id="事务管理"><a href="#事务管理" class="headerlink" title="事务管理"></a>事务管理</h4><ul>
-<li>一致性</li>
-<li>原子性</li>
-<li>持久性</li>
-</ul>
-<p>事务：数据库应用中完成单一逻辑功能的操作集合</p>
-<p>事务管理器：</p>
-<ul>
-<li>并发控制管理器</li>
-<li>恢复管理器</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/02/Mybatis源码分析（一）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chazdada">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chaz Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/10/02/Mybatis源码分析（一）/" itemprop="url">Mybatis源码分析（一）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-02T15:41:40+08:00">
-                2019-10-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="Mybatis-源码分析（一）"><a href="#Mybatis-源码分析（一）" class="headerlink" title="Mybatis 源码分析（一）"></a>Mybatis 源码分析（一）</h2><p>参考：一本小小的MyBatis源码分析书</p>
-<h3 id="Mybatis-入门"><a href="#Mybatis-入门" class="headerlink" title="Mybatis 入门"></a>Mybatis 入门</h3><h4 id="Mybatis-是什么？"><a href="#Mybatis-是什么？" class="headerlink" title="Mybatis 是什么？"></a>Mybatis 是什么？</h4><ul>
-<li>MyBatis 是一种半自动化的 Java 持久层框架（persistence framework），其通过注解或 XML<br>的方式将对象和 SQL 关联起来。半自动是因为和 Hibernate 等一些可自动生成SQL的ORM(Object Relational Mapping)框架相比，使用MyBatis需要用户自行维护SQL。</li>
-</ul>
-<h4 id="与-JDBC-对比"><a href="#与-JDBC-对比" class="headerlink" title="与 JDBC 对比"></a>与 JDBC 对比</h4><p>jdbc 缺点:</p>
-<ul>
-<li>代码繁琐，冗余</li>
-<li>拼接 SQL 可能会导致 SQL 出错</li>
-<li>SQL 写在代码中，如果要改动 SQL，就需要到代码中进行更改</li>
-<li>手动从 ResultSet中取出数据</li>
-<li>用户需要自行处理受检异常</li>
-</ul>
-<p>Mybatis:</p>
-<ul>
-<li>SqlSessionFactory 是一个工厂类，一旦被创建就应该在应用运行期间一直存在，不应该丢弃或重建。SqlSession 不是线程安全的，所以不应被多线程共享。官方推荐的使用方式是有按需创建，用完即销毁。</li>
-<li>使用 MyBatis 无需处理受检异常</li>
-<li>SQL 写在配置文件中，进行集中管理，利于维护。同时将 SQL 从代码中剥离，在提高代码的可读性的同时，也避免了拼接 SQL 可能会导致的错误</li>
-<li>将查询结果映射为相应的对象</li>
-</ul>
-<p>JDBC 可看做是一种基础服务，MyBatis 则是构建在基础服务之上的框架。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/25/深入理解JVM（二）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chazdada">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chaz Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/09/25/深入理解JVM（二）/" itemprop="url">深入理解JVM（二）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-25T16:34:05+08:00">
-                2019-09-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="深入理解-JVM（二）"><a href="#深入理解-JVM（二）" class="headerlink" title="深入理解 JVM（二）"></a>深入理解 JVM（二）</h2><p><strong>编译</strong>：创建完源文件之后，程序先要被JVM中的java编译器进行编译为<strong>.class</strong>文件。java编译一个类时，若这个类所依赖的类还没有被编译，编译器会自动的先编译这个所依赖的类，然后引用；若java编译器在指定的目录下找不到该类所依赖的类的 .class文件或者 .java源文件，就会报”Can’t found sysbol”的异常错误。</p>
-<p>编译后的字节码文件格式主要分为两部分：<strong>常量池和方法字节码</strong>。</p>
-<h3 id="类加载与常量"><a href="#类加载与常量" class="headerlink" title="类加载与常量"></a>类加载与常量</h3><p>常量在编译阶段会存入到调用这个常量的方法所在的类的常量池中。</p>
-<p>本质上，调用类并没有直接引用到定义常量的类，因此并不会触发定义常量的类的初始化。</p>
-<p>当一个常量的值并非编译期间可以确定的，那么其值就不会被放到调用类的常量池中，当这程序在运行时，会导致主动使用这个常量所在的类，显然会导致这个类的初始化。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2051,7 +2132,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">17</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -2062,7 +2143,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -2073,7 +2154,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="数据库,MySQL,">
 
 
 
@@ -79,13 +79,18 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Chaz Blog">
-<meta property="og:url" content="http://yoursite.com/archives/2019/index.html">
+<meta name="description" content="MySQL技术内幕（二）文件参数文件告诉MySQL实例启动时在哪里可以找到数据库文件，并指定某些初始化参数。 show variables； 参数类型：  动态参数：在MySQL实例运行过程中可以修改 静态参数：在整个实例的生命周期内不得修改  日志文件 错误文件：MySQL启动、运行、关闭进行了记录，数据库优化 慢查询日志：为SQL语句的优化带来帮助。设置long_query_time,将超过阈">
+<meta name="keywords" content="数据库,MySQL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL技术内幕（二）">
+<meta property="og:url" content="http://yoursite.com/2019/11/16/MySQL技术内幕（二）/index.html">
 <meta property="og:site_name" content="Chaz Blog">
+<meta property="og:description" content="MySQL技术内幕（二）文件参数文件告诉MySQL实例启动时在哪里可以找到数据库文件，并指定某些初始化参数。 show variables； 参数类型：  动态参数：在MySQL实例运行过程中可以修改 静态参数：在整个实例的生命周期内不得修改  日志文件 错误文件：MySQL启动、运行、关闭进行了记录，数据库优化 慢查询日志：为SQL语句的优化带来帮助。设置long_query_time,将超过阈">
 <meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-11-16T08:03:43.113Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chaz Blog">
+<meta name="twitter:title" content="MySQL技术内幕（二）">
+<meta name="twitter:description" content="MySQL技术内幕（二）文件参数文件告诉MySQL实例启动时在哪里可以找到数据库文件，并指定某些初始化参数。 show variables； 参数类型：  动态参数：在MySQL实例运行过程中可以修改 静态参数：在整个实例的生命周期内不得修改  日志文件 错误文件：MySQL启动、运行、关闭进行了记录，数据库优化 慢查询日志：为SQL语句的优化带来帮助。设置long_query_time,将超过阈">
 
 
 
@@ -115,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/archives/2019/">
+  <link rel="canonical" href="http://yoursite.com/2019/11/16/MySQL技术内幕（二）/">
 
 
 
 
 
-  <title>Archive | Chaz Blog</title>
+  <title>MySQL技术内幕（二） | Chaz Blog</title>
   
 
 
@@ -140,7 +145,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -266,391 +271,205 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-      <span class="archive-page-counter">
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/16/MySQL技术内幕（二）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chazdada">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaz Blog">
+    </span>
+
+    
+      <header class="post-header">
+
         
         
+          <h1 class="post-title" itemprop="name headline">MySQL技术内幕（二）</h1>
         
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-11-16T15:11:18+08:00">
+                2019-11-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
           
-        
-        Um..! 17 posts in total. Keep on posting.
-      </span>
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/数据库/" itemprop="url" rel="index">
+                    <span itemprop="name">数据库</span>
+                  </a>
+                </span>
 
-      
-
-        
-        
-        
-
-        
+                
+                
+              
+            </span>
           
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2019">2019</h1>
-          </div>
-        
-        
 
-        
+          
+            
+          
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+          
+          
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/11/20/并发(二) /" itemprop="url">
-              
-                <span itemprop="name">并发（二）</span>
-              
-            </a>
-        
-      </h2>
+          
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-11-20T21:09:44+08:00" content="2019-11-20">
-          11-20
-        </time>
-      </div>
+          
 
-    </header>
-  </article>
+          
 
+        </div>
+      </header>
+    
 
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/11/18/机器学习（一）/" itemprop="url">
-              
-                <span itemprop="name">机器学习（一）</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-11-18T14:17:33+08:00" content="2019-11-18">
-          11-18
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
       
 
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/11/17/分布式（二）/" itemprop="url">
-              
-                <span itemprop="name">分布式（二）</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-11-17T16:29:36+08:00" content="2019-11-17">
-          11-17
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+      
+        <h2 id="MySQL技术内幕（二）"><a href="#MySQL技术内幕（二）" class="headerlink" title="MySQL技术内幕（二）"></a>MySQL技术内幕（二）</h2><h3 id="文件"><a href="#文件" class="headerlink" title="文件"></a>文件</h3><h4 id="参数文件"><a href="#参数文件" class="headerlink" title="参数文件"></a>参数文件</h4><p>告诉MySQL实例启动时在哪里可以找到数据库文件，并指定某些初始化参数。</p>
+<p>show variables；</p>
+<p>参数类型：</p>
+<ul>
+<li>动态参数：在MySQL实例运行过程中可以修改</li>
+<li>静态参数：在整个实例的生命周期内不得修改</li>
+</ul>
+<h4 id="日志文件"><a href="#日志文件" class="headerlink" title="日志文件"></a>日志文件</h4><ul>
+<li>错误文件：MySQL启动、运行、关闭进行了记录，数据库优化</li>
+<li>慢查询日志：为SQL语句的优化带来帮助。设置long_query_time,将超过阈值的写入到慢查询日志</li>
+<li>查询日志：所有对MySQL数据库请求信息</li>
+<li>二进制日志：对数据库执行的更改操作。<ul>
+<li>恢复</li>
+<li>复制</li>
+</ul>
+</li>
+</ul>
+<h4 id="socket文件"><a href="#socket文件" class="headerlink" title="socket文件"></a>socket文件</h4><p>UNIX系统下连接数据库可以使用套接字</p>
+<h4 id="pid文件"><a href="#pid文件" class="headerlink" title="pid文件"></a>pid文件</h4><p>实例启动时，会把自己进程id写进到一个文件中</p>
+<h4 id="MySql表结构文件"><a href="#MySql表结构文件" class="headerlink" title="MySql表结构文件"></a>MySql表结构文件</h4><p>.frm文件</p>
+<h4 id="存储引擎文件"><a href="#存储引擎文件" class="headerlink" title="存储引擎文件"></a>存储引擎文件</h4><ul>
+<li>表空间文件<ul>
+<li>默认会初始化10MB，名为ibdata1的文件</li>
+<li>单独.ibd文件</li>
+</ul>
+</li>
+<li>重做日志文件<ul>
+<li>事务恢复</li>
+</ul>
+</li>
+</ul>
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/11/16/MySQL技术内幕（二）/" itemprop="url">
-              
-                <span itemprop="name">MySQL技术内幕（二）</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-11-16T15:11:18+08:00" content="2019-11-16">
-          11-16
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/11/16/分布式（一）/" itemprop="url">
-              
-                <span itemprop="name">分布式（一）</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-11-16T10:33:04+08:00" content="2019-11-16">
-          11-16
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/11/14/并发(一)/" itemprop="url">
-              
-                <span itemprop="name">并发（一）</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-11-14T21:24:29+08:00" content="2019-11-14">
-          11-14
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/10/30/MySQL技术内幕（一）/" itemprop="url">
-              
-                <span itemprop="name">MySQL技术内幕（一）</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-10-30T14:59:45+08:00" content="2019-10-30">
-          10-30
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/10/25/数据库（三）/" itemprop="url">
-              
-                <span itemprop="name">数据库（三）</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-10-25T10:28:23+08:00" content="2019-10-25">
-          10-25
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/10/06/java文件路径/" itemprop="url">
-              
-                <span itemprop="name">Java文件</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-10-06T22:33:28+08:00" content="2019-10-06">
-          10-06
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/10/05/数据库（二）/" itemprop="url">
-              
-                <span itemprop="name">数据库（二）</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-10-05T18:50:10+08:00" content="2019-10-05">
-          10-05
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
     </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/数据库/" rel="tag"># 数据库</a>
+          
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/16/分布式（一）/" rel="next" title="分布式（一）">
+                <i class="fa fa-chevron-left"></i> 分布式（一）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/17/分布式（二）/" rel="prev" title="分布式（二）">
+                分布式（二） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/archives/2019/page/2/">2</a><a class="extend next" rel="next" href="/archives/2019/page/2/"><i class="fa fa-angle-right"></i></a>
-  </nav>
+  </article>
 
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -658,6 +477,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -678,8 +501,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -749,6 +581,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL技术内幕（二）"><span class="nav-number">1.</span> <span class="nav-text">MySQL技术内幕（二）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#文件"><span class="nav-number">1.1.</span> <span class="nav-text">文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参数文件"><span class="nav-number">1.1.1.</span> <span class="nav-text">参数文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#日志文件"><span class="nav-number">1.1.2.</span> <span class="nav-text">日志文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#socket文件"><span class="nav-number">1.1.3.</span> <span class="nav-text">socket文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pid文件"><span class="nav-number">1.1.4.</span> <span class="nav-text">pid文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MySql表结构文件"><span class="nav-number">1.1.5.</span> <span class="nav-text">MySql表结构文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#存储引擎文件"><span class="nav-number">1.1.6.</span> <span class="nav-text">存储引擎文件</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -876,6 +724,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
