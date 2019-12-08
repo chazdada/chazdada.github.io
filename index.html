@@ -281,6 +281,176 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/08/并发(五)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chazdada">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaz Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/12/08/并发(五)/" itemprop="url">并发(五)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-08T12:17:07+08:00">
+                2019-12-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="并发（五）"><a href="#并发（五）" class="headerlink" title="并发（五）"></a>并发（五）</h2><h3 id="Semaphore"><a href="#Semaphore" class="headerlink" title="Semaphore"></a>Semaphore</h3><h4 id="信号量模型"><a href="#信号量模型" class="headerlink" title="信号量模型"></a>信号量模型</h4><ul>
+<li>一个计数器</li>
+<li>一个等待队列</li>
+<li>三个方法<ul>
+<li>init：设置计数器的初始值。</li>
+<li>up：计数器的值减 1；如果此时计数器的值小于 0，则当前线程将被阻塞，否则当前线程可以继续执行。</li>
+<li>down：计数器的值加 1；如果此时计数器的值小于或者等于 0，则唤醒等待队列中的一个线程，并将其从等待队列中移除。</li>
+</ul>
+</li>
+</ul>
+<p>Java SDK 里面，信号量模型是由 java.util.concurrent.Semaphore实现的，Semaphore 这个类能够保证这三个方法都是原子操作。</p>
+<p>在 Java SDK 并发包里，down() 和 up() 对应的则是 acquire() 和 release()。</p>
+<p><strong>note</strong>：管程很难实现多个线程同时访问一个并发变量。</p>
+<h4 id="使用–限流器"><a href="#使用–限流器" class="headerlink" title="使用–限流器"></a>使用–限流器</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ObjPool</span>&lt;<span class="title">T</span>, <span class="title">R</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> List&lt;T&gt; pool;</span><br><span class="line">    <span class="comment">// 用信号量实现限流器</span></span><br><span class="line">    <span class="keyword">final</span> Semaphore sem;</span><br><span class="line">    <span class="comment">// 构造函数</span></span><br><span class="line">    ObjPool(<span class="keyword">int</span> size, T t)&#123;</span><br><span class="line">        pool = <span class="keyword">new</span> Vector&lt;T&gt;()&#123;&#125;;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;size; i++)&#123;</span><br><span class="line">            pool.add(t);</span><br><span class="line">        &#125;</span><br><span class="line">        sem = <span class="keyword">new</span> Semaphore(size);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 利用对象池的对象，调用 func</span></span><br><span class="line">    <span class="function">R <span class="title">exec</span><span class="params">(Function&lt;T,R&gt; func)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        T t = <span class="keyword">null</span>;</span><br><span class="line">        sem.acquire();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            t = pool.remove(<span class="number">0</span>);</span><br><span class="line">            <span class="keyword">return</span> func.apply(t);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            pool.add(t);</span><br><span class="line">            sem.release();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ReadWriteLock-实现缓存"><a href="#ReadWriteLock-实现缓存" class="headerlink" title="ReadWriteLock 实现缓存"></a>ReadWriteLock 实现缓存</h3><h4 id="读写锁（读多写少）"><a href="#读写锁（读多写少）" class="headerlink" title="读写锁（读多写少）"></a>读写锁（读多写少）</h4><p>读写锁三条原则：</p>
+<ul>
+<li>允许多个线程同时读共享变量；</li>
+<li>只允许一个线程写共享变量；</li>
+<li>如果一个写线程正在执行写操作，此时禁止读线程读共享变量。</li>
+</ul>
+<p>缓存数据初始化：</p>
+<ul>
+<li>一次性加载的方式</li>
+<li>懒加载–按需加载</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cache</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Map&lt;K, V&gt; m =</span><br><span class="line">            <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    <span class="keyword">final</span> ReadWriteLock rwl =</span><br><span class="line">            <span class="keyword">new</span> ReentrantReadWriteLock();</span><br><span class="line">    <span class="keyword">final</span> Lock r = rwl.readLock();</span><br><span class="line">    <span class="keyword">final</span> Lock w = rwl.writeLock();</span><br><span class="line">    <span class="function">V <span class="title">get</span><span class="params">(K key)</span> </span>&#123;</span><br><span class="line">        V v = <span class="keyword">null</span>;</span><br><span class="line"><span class="comment">// 读缓存</span></span><br><span class="line">        r.lock(); ①</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            v = m.get(key); ②</span><br><span class="line">        &#125; <span class="keyword">finally</span>&#123;</span><br><span class="line">            r.unlock(); ③</span><br><span class="line">        &#125;</span><br><span class="line"><span class="comment">// 缓存中存在，返回</span></span><br><span class="line">        <span class="keyword">if</span>(v != <span class="keyword">null</span>) &#123; ④</span><br><span class="line">            <span class="keyword">return</span> v;</span><br><span class="line">        &#125;</span><br><span class="line"><span class="comment">// 缓存中不存在，查询数据库</span></span><br><span class="line">        w.lock(); ⑤</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line"><span class="comment">// 再次验证</span></span><br><span class="line"><span class="comment">// 其他线程可能已经查询过数据库</span></span><br><span class="line">            v = m.get(key); ⑥</span><br><span class="line">            <span class="keyword">if</span>(v == <span class="keyword">null</span>)&#123; ⑦</span><br><span class="line"><span class="comment">// 查询数据库</span></span><br><span class="line">                v= 省略代码无数</span><br><span class="line">                m.put(key, v);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">finally</span>&#123;</span><br><span class="line">            w.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> v;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先是获取读锁，然后再升级为写锁，叫锁的升级。可惜 ReadWriteLock 并不支持这种升级。ReentrantReadWriteLock获取读锁的时候线程还是持有写锁的，这种锁的降级是支持的。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/28/并发(四)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1963,231 +2133,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/30/MySQL技术内幕（一）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chazdada">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chaz Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/10/30/MySQL技术内幕（一）/" itemprop="url">MySQL技术内幕（一）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-30T14:59:45+08:00">
-                2019-10-30
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/数据库/" itemprop="url" rel="index">
-                    <span itemprop="name">数据库</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="MySQL技术内幕（一）"><a href="#MySQL技术内幕（一）" class="headerlink" title="MySQL技术内幕（一）"></a>MySQL技术内幕（一）</h2><p>数据库：物理操作系统文件或其他类型文件集合</p>
-<ul>
-<li><p>如果表格b采用MyISAM，在数据库/usr/local/mysql/data/user 中会产生3个文件：</p>
-<ul>
-<li>b.frm ：描述表结构文件，字段长度等</li>
-<li>b.MYD(MYData)：数据信息文件，存储数据信息(如果采用独立表存储模式)</li>
-<li>b.MYI(MYIndex)：索引信息文件。</li>
-</ul>
-</li>
-<li><p>如果表格b采用InnoDB，在数据库/usr/local/mysql/data/user中会产生1个或者2个文件：</p>
-<ul>
-<li>b.frm ：描述表结构文件，字段长度等</li>
-<li>如果采用独立表存储模式，/usr/local/mysql/data/user中还会产生b.ibd文件（存储数据信息和索引信息）</li>
-<li>如果采用共存储模式的，数据信息和索引信息都存储在ibdata1中</li>
-</ul>
-</li>
-</ul>
-<p>数据库实例：有数据库后台进程/线程以及一个共享内存区组成，数据库实例用来操作数据库文件</p>
-<p>MySQL设计为单进程多线程架构。</p>
-<p>启动实例时，MySQL会读取配置文件，根据配置文件启动数据库。没有配置文件不会报错，根据默认参数，而Oracle会。</p>
-<p>MySQL由以下几部分组成：</p>
-<ul>
-<li>连接池组件</li>
-<li>管理服务和工具组件</li>
-<li>SQL接口组件</li>
-<li>查询分析器组件</li>
-<li>优化器组件</li>
-<li>缓冲组件</li>
-<li>插件式存储引擎</li>
-<li>物理文件</li>
-</ul>
-<p>存储引擎是基于表的。</p>
-<h3 id="InnoDB-存储引擎"><a href="#InnoDB-存储引擎" class="headerlink" title="InnoDB 存储引擎"></a>InnoDB 存储引擎</h3><h4 id="InnoDB-体系架构"><a href="#InnoDB-体系架构" class="headerlink" title="InnoDB 体系架构"></a>InnoDB 体系架构</h4><ul>
-<li><p>内存池</p>
-<ul>
-<li><p>缓存池：缓存各种数据，将数据库文件按页读到缓冲池，按最近最少使用算法保留缓冲池中的数据。数据库文件修改，先修改缓存池的页，再按一定频率将脏页刷新到文件。</p>
-<p>缓存数据类型：</p>
-<ul>
-<li>索引页</li>
-<li>数据页</li>
-<li>undo页（ <a href="https://blog.csdn.net/alexdamiao/article/details/51872477" target="_blank" rel="noopener">https://blog.csdn.net/alexdamiao/article/details/51872477</a> ）</li>
-<li>插入缓存</li>
-<li>自适应哈希索引</li>
-<li>锁信息</li>
-<li>数据字典信息</li>
-</ul>
-</li>
-<li><p>重做日志缓冲池：重做日志信息</p>
-</li>
-<li><p>额外内存池：一些数据结构分配内存需要从该区申请</p>
-</li>
-</ul>
-</li>
-<li><p>后台线程：负责刷新内存池中的数据，保证缓冲池中的内存缓存的是最近的数据。将已修改的数据文件刷新到磁盘，同时在异常情况下恢复</p>
-<ul>
-<li>后台线程7个：4个IO线程，1个master线程，1个锁线程，1个错误监控线程</li>
-</ul>
-</li>
-</ul>
-<h4 id="关键特性"><a href="#关键特性" class="headerlink" title="关键特性"></a>关键特性</h4><ul>
-<li><p>插入缓冲（性能）</p>
-<p>对于非聚集的辅助索引，数据页的存放还是按主键id的执行顺序存放。对于非聚集索引，叶子节点的插入不是顺序的。先判断插入的非聚集索引页是否在缓冲池里，如果在，直接插入。不在先放入插入缓冲区中，再按一定的频率执行插入缓冲和非聚集索引的叶子节点进行合并操作。</p>
-<p>前提条件：</p>
-<ul>
-<li>索引是辅助索引</li>
-<li>索引不是唯一的（原因：如果唯一，又需要查找索引页的情况，出现离散读的情况，插入缓冲失去了意义）</li>
-</ul>
-</li>
-<li><p>两次写（可靠性）</p>
-<ul>
-<li>内存 doublewrite buffer</li>
-<li>物理磁盘上共享表空间</li>
-</ul>
-<p>脏页刷新时，先将脏页拷贝到内存doublewrite buffer，然后每次写1mb到共享表空间，马上同步磁盘</p>
-</li>
-<li><p>自适应哈希</p>
-<p>InnoDB监控对表上索引的查找，如果观察到建立哈希索引可以加速，则建立。通过缓冲池的B+树构造，按频率为页建立，不需要将整个表都建哈希索引。</p>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2233,7 +2183,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
