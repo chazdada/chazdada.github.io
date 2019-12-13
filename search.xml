@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[并发(六)]]></title>
+    <url>%2F2019%2F12%2F13%2F%E5%B9%B6%E5%8F%91(%E5%85%AD)%2F</url>
+    <content type="text"><![CDATA[并发（六）StampedLockStampedLock 支持三种模式，分别是： 写锁 悲观读锁 乐观读(无锁) StampedLock 里的写锁和悲观读锁加锁成功之后，都会返回一个 stamp；然后解锁的时候，需要传入这个 stamp。 12345678910111213141516final StampedLock sl = new StampedLock();// 获取 / 释放悲观读锁示意代码 long stamp = sl.readLock(); try &#123;// 省略业务相关代码 &#125; finally &#123; sl.unlockRead(stamp); &#125;// 获取 / 释放写锁示意代码 long stamp = sl.writeLock(); try &#123;// 省略业务相关代码 &#125; finally &#123; sl.unlockWrite(stamp); &#125; ReadWriteLock 支持多个线程同时读，但是当多个线程同时读的时候，所有的写操作会被阻塞；而 StampedLock 提供的乐观读，是允许一个线程获取写锁的，也就是说不是所有的写操作都被阻塞。 StampedLock 读模板123456789101112131415161718192021final StampedLock sl = new StampedLock();// 乐观读 long stamp = sl.tryOptimisticRead();// 读入方法局部变量 ......// 校验 stamp if (!sl.validate(stamp))&#123;// 升级为悲观读锁 stamp = sl.readLock(); try &#123;// 读入方法局部变量 ..... &#125; finally &#123;// 释放悲观读锁 sl.unlockRead(stamp); &#125; &#125;// 使用方法局部变量执行业务操作 ...... StampedLock 写模板1234567long stamp = sl.writeLock();try &#123; // 写共享变量 ...... &#125; finally &#123; sl.unlockWrite(stamp);&#125;]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>并发</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[并发(五)]]></title>
     <url>%2F2019%2F12%2F08%2F%E5%B9%B6%E5%8F%91(%E4%BA%94)%2F</url>
     <content type="text"><![CDATA[并发（五）Semaphore信号量模型 一个计数器 一个等待队列 三个方法 init：设置计数器的初始值。 up：计数器的值减 1；如果此时计数器的值小于 0，则当前线程将被阻塞，否则当前线程可以继续执行。 down：计数器的值加 1；如果此时计数器的值小于或者等于 0，则唤醒等待队列中的一个线程，并将其从等待队列中移除。 Java SDK 里面，信号量模型是由 java.util.concurrent.Semaphore实现的，Semaphore 这个类能够保证这三个方法都是原子操作。 在 Java SDK 并发包里，down() 和 up() 对应的则是 acquire() 和 release()。 note：管程很难实现多个线程同时访问一个并发变量。 使用–限流器12345678910111213141516171819202122232425class ObjPool&lt;T, R&gt; &#123; final List&lt;T&gt; pool; // 用信号量实现限流器 final Semaphore sem; // 构造函数 ObjPool(int size, T t)&#123; pool = new Vector&lt;T&gt;()&#123;&#125;; for(int i=0; i&lt;size; i++)&#123; pool.add(t); &#125; sem = new Semaphore(size); &#125; // 利用对象池的对象，调用 func R exec(Function&lt;T,R&gt; func) throws InterruptedException &#123; T t = null; sem.acquire(); try &#123; t = pool.remove(0); return func.apply(t); &#125; finally &#123; pool.add(t); sem.release(); &#125; &#125;&#125; ReadWriteLock 实现缓存读写锁（读多写少）读写锁三条原则： 允许多个线程同时读共享变量； 只允许一个线程写共享变量； 如果一个写线程正在执行写操作，此时禁止读线程读共享变量。 缓存数据初始化： 一次性加载的方式 懒加载–按需加载 12345678910111213141516171819202122232425262728293031323334353637class Cache&lt;K,V&gt; &#123; final Map&lt;K, V&gt; m = new HashMap&lt;&gt;(); final ReadWriteLock rwl = new ReentrantReadWriteLock(); final Lock r = rwl.readLock(); final Lock w = rwl.writeLock(); V get(K key) &#123; V v = null;// 读缓存 r.lock(); ① try &#123; v = m.get(key); ② &#125; finally&#123; r.unlock(); ③ &#125;// 缓存中存在，返回 if(v != null) &#123; ④ return v; &#125;// 缓存中不存在，查询数据库 w.lock(); ⑤ try &#123;// 再次验证// 其他线程可能已经查询过数据库 v = m.get(key); ⑥ if(v == null)&#123; ⑦// 查询数据库 v= 省略代码无数 m.put(key, v); &#125; &#125; finally&#123; w.unlock(); &#125; return v; &#125;&#125; 先是获取读锁，然后再升级为写锁，叫锁的升级。可惜 ReadWriteLock 并不支持这种升级。ReentrantReadWriteLock获取读锁的时候线程还是持有写锁的，这种锁的降级是支持的。]]></content>
