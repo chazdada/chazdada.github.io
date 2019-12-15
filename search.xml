@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[Git]]></title>
+    <url>%2F2019%2F12%2F15%2FGit%2F</url>
+    <content type="text"><![CDATA[Git .git object 全增量文件所在地，目录名+里面文件名为全增量的文件名 123git cat-file -p 61ac375fc5565c8a763d942dc599fd34128bdb3761 目录名 ac375fc5565c8a763d942dc599fd34128bdb37文件名查看文件内容 index文件是暂存区 12git ls-files --stage查看内容 HEAD文件描述了当前分支上 Head 的位置 12git config --global user.email &quot;easychen@gmail.com&quot;git config --global user.name &quot;Easy&quot; 创建分支并切换 12git branch devgit checkout dev git merge 分支合并 冲突： 合并失败，运行git merge –abort ，就可以恢复到 merge 之前的状态。 手动处理冲突 git log 查看提交日志 git checkout SHA1 值，我们就可以回到那次提交时的历史。 checkout 后边加上 -b 参数来将其检出为一个全新的分支。 本地没有仓库git clone repo 将远程仓库复制到本地 git remote 命令，我们可以查看到所有关联到当前仓库的远程仓库 git remote show (name)命令，我们可以查看某一个远程仓库的详细信息。 git push 和 git pull 命令，我们可以从服务器端推送和拉取代码。 本地有仓库先在 github 上创建一个空的项目，得到远程仓库地址。然后把它和本地仓库关联起来。 git init git remote add 命令 123git remote remove origingit remote add origin2 https://github.com/easychen/litephp.gitgit remote show origin2 git pull name branch git push name branch git stash 将本次修改暂时存入储藏区，并切回到修改之前的版本 git stash apply ， git 就会自动把之前放到储藏区的最新的那个修改切回来 git stash list 命令，可以把所有放到储藏区的修改都列出来。]]></content>
+      <categories>
+        <category>Git</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[MySQL技术内幕（三）]]></title>
+    <url>%2F2019%2F12%2F14%2FMysql%E6%8A%80%E6%9C%AF%E5%86%85%E5%B9%95(%E4%B8%89)%2F</url>
+    <content type="text"><![CDATA[MySQL技术内幕（三）索引：https://segmentfault.com/a/1190000019366328?utm_source=tag-newest mysql日志文件：https://blog.csdn.net/u012834750/article/details/79533866 表InnoDB存储引擎表，每张表都有主键，若没有显示定义主键，则按以下方式创建主键： 非空且唯一的索引 自动创建一个6个字节大小的指针 逻辑存储结构 表空间 默认共享表空间 innodb_file_per_table 可单独放到一个表空间，但只包含以下数据：数据、索引、插入缓冲，其他类信息如undo信息、系统事务信息、二次写缓存放在原来的共享表空间内 段 数据段 索引段 回滚段 区 64个页，每个页大小16kb，每个区大小1MB 页（块） 行]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[并发(六)]]></title>
     <url>%2F2019%2F12%2F13%2F%E5%B9%B6%E5%8F%91(%E5%85%AD)%2F</url>
     <content type="text"><![CDATA[并发（六）StampedLockStampedLock 支持三种模式，分别是： 写锁 悲观读锁 乐观读(无锁) StampedLock 里的写锁和悲观读锁加锁成功之后，都会返回一个 stamp；然后解锁的时候，需要传入这个 stamp。 12345678910111213141516final StampedLock sl = new StampedLock();// 获取 / 释放悲观读锁示意代码 long stamp = sl.readLock(); try &#123;// 省略业务相关代码 &#125; finally &#123; sl.unlockRead(stamp); &#125;// 获取 / 释放写锁示意代码 long stamp = sl.writeLock(); try &#123;// 省略业务相关代码 &#125; finally &#123; sl.unlockWrite(stamp); &#125; ReadWriteLock 支持多个线程同时读，但是当多个线程同时读的时候，所有的写操作会被阻塞；而 StampedLock 提供的乐观读，是允许一个线程获取写锁的，也就是说不是所有的写操作都被阻塞。 StampedLock 读模板123456789101112131415161718192021final StampedLock sl = new StampedLock();// 乐观读 long stamp = sl.tryOptimisticRead();// 读入方法局部变量 ......// 校验 stamp if (!sl.validate(stamp))&#123;// 升级为悲观读锁 stamp = sl.readLock(); try &#123;// 读入方法局部变量 ..... &#125; finally &#123;// 释放悲观读锁 sl.unlockRead(stamp); &#125; &#125;// 使用方法局部变量执行业务操作 ...... StampedLock 写模板1234567long stamp = sl.writeLock();try &#123; // 写共享变量 ...... &#125; finally &#123; sl.unlockWrite(stamp);&#125;]]></content>
@@ -223,8 +247,8 @@
         <category>Java</category>
       </categories>
       <tags>
-        <tag>HashMap</tag>
         <tag>Java</tag>
+        <tag>HashMap</tag>
       </tags>
   </entry>
   <entry>

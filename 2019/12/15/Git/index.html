@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Java,并发,">
+  <meta name="keywords" content="Java,Git,">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="并发（六）StampedLockStampedLock 支持三种模式，分别是：  写锁 悲观读锁 乐观读(无锁)  StampedLock 里的写锁和悲观读锁加锁成功之后，都会返回一个 stamp；然后解锁的时候，需要传入这个 stamp。 12345678910111213141516final StampedLock sl =		new StampedLock();// 获取 / 释放悲观读锁">
-<meta name="keywords" content="Java,并发">
+<meta name="description" content="Git .git  object 全增量文件所在地，目录名+里面文件名为全增量的文件名   123git cat-file -p 61ac375fc5565c8a763d942dc599fd34128bdb3761 目录名 ac375fc5565c8a763d942dc599fd34128bdb37文件名查看文件内容  index文件是暂存区 12git ls-files --stage查看内容">
+<meta name="keywords" content="Java,Git">
 <meta property="og:type" content="article">
-<meta property="og:title" content="并发(六)">
-<meta property="og:url" content="http://yoursite.com/2019/12/13/并发(六)/index.html">
+<meta property="og:title" content="Git">
+<meta property="og:url" content="http://yoursite.com/2019/12/15/Git/index.html">
 <meta property="og:site_name" content="Chaz Blog">
-<meta property="og:description" content="并发（六）StampedLockStampedLock 支持三种模式，分别是：  写锁 悲观读锁 乐观读(无锁)  StampedLock 里的写锁和悲观读锁加锁成功之后，都会返回一个 stamp；然后解锁的时候，需要传入这个 stamp。 12345678910111213141516final StampedLock sl =		new StampedLock();// 获取 / 释放悲观读锁">
+<meta property="og:description" content="Git .git  object 全增量文件所在地，目录名+里面文件名为全增量的文件名   123git cat-file -p 61ac375fc5565c8a763d942dc599fd34128bdb3761 目录名 ac375fc5565c8a763d942dc599fd34128bdb37文件名查看文件内容  index文件是暂存区 12git ls-files --stage查看内容">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-12-13T08:12:06.748Z">
+<meta property="og:updated_time" content="2019-12-15T15:34:58.016Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="并发(六)">
-<meta name="twitter:description" content="并发（六）StampedLockStampedLock 支持三种模式，分别是：  写锁 悲观读锁 乐观读(无锁)  StampedLock 里的写锁和悲观读锁加锁成功之后，都会返回一个 stamp；然后解锁的时候，需要传入这个 stamp。 12345678910111213141516final StampedLock sl =		new StampedLock();// 获取 / 释放悲观读锁">
+<meta name="twitter:title" content="Git">
+<meta name="twitter:description" content="Git .git  object 全增量文件所在地，目录名+里面文件名为全增量的文件名   123git cat-file -p 61ac375fc5565c8a763d942dc599fd34128bdb3761 目录名 ac375fc5565c8a763d942dc599fd34128bdb37文件名查看文件内容  index文件是暂存区 12git ls-files --stage查看内容">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/12/13/并发(六)/">
+  <link rel="canonical" href="http://yoursite.com/2019/12/15/Git/">
 
 
 
 
 
-  <title>并发(六) | Chaz Blog</title>
+  <title>Git | Chaz Blog</title>
   
 
 
@@ -285,7 +285,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/13/并发(六)/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/15/Git/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="chazdada">
@@ -302,7 +302,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">并发(六)</h1>
+          <h1 class="post-title" itemprop="name headline">Git</h1>
         
 
         <div class="post-meta">
@@ -314,8 +314,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-13T15:59:42+08:00">
-                2019-12-13
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-15T16:02:34+08:00">
+                2019-12-15
               </time>
             
 
@@ -337,8 +337,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
+                  <a href="/categories/Git/" itemprop="url" rel="index">
+                    <span itemprop="name">Git</span>
                   </a>
                 </span>
 
@@ -374,20 +374,47 @@
       
 
       
-        <h2 id="并发（六）"><a href="#并发（六）" class="headerlink" title="并发（六）"></a>并发（六）</h2><h3 id="StampedLock"><a href="#StampedLock" class="headerlink" title="StampedLock"></a>StampedLock</h3><p>StampedLock 支持三种模式，分别是：</p>
+        <h2 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h2><ul>
+<li><p>.git</p>
 <ul>
-<li>写锁</li>
-<li>悲观读锁</li>
-<li>乐观读(无锁)</li>
+<li><p>object 全增量文件所在地，目录名+里面文件名为全增量的文件名  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git cat-file -p 61ac375fc5565c8a763d942dc599fd34128bdb37</span><br><span class="line">61 目录名 ac375fc5565c8a763d942dc599fd34128bdb37文件名</span><br><span class="line">查看文件内容</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>index文件是暂存区</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git ls-files --stage</span><br><span class="line">查看内容</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>HEAD文件描述了当前分支上 Head 的位置</p>
+</li>
 </ul>
-<p>StampedLock 里的写锁和悲观读锁加锁成功之后，都会返回一个 stamp；然后解锁的时候，需要传入这个 stamp。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> StampedLock sl =</span><br><span class="line">		<span class="keyword">new</span> StampedLock();</span><br><span class="line"><span class="comment">// 获取 / 释放悲观读锁示意代码</span></span><br><span class="line">		<span class="keyword">long</span> stamp = sl.readLock();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line"><span class="comment">// 省略业务相关代码</span></span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">		sl.unlockRead(stamp);</span><br><span class="line">		&#125;</span><br><span class="line"><span class="comment">// 获取 / 释放写锁示意代码</span></span><br><span class="line">		<span class="keyword">long</span> stamp = sl.writeLock();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line"><span class="comment">// 省略业务相关代码</span></span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">		sl.unlockWrite(stamp);</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.email &quot;easychen@gmail.com&quot;</span><br><span class="line">git config --global user.name &quot;Easy&quot;</span><br></pre></td></tr></table></figure>
 
-<p>ReadWriteLock 支持多个线程同时读，但是当多个线程同时读的时候，所有的写操作会被阻塞；而 StampedLock 提供的乐观读，是允许一个线程获取写锁的，也就是说不是所有的写操作都被阻塞。</p>
-<h4 id="StampedLock-读模板"><a href="#StampedLock-读模板" class="headerlink" title="StampedLock 读模板"></a>StampedLock 读模板</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> StampedLock sl =</span><br><span class="line">		<span class="keyword">new</span> StampedLock();</span><br><span class="line"><span class="comment">// 乐观读</span></span><br><span class="line">		<span class="keyword">long</span> stamp =</span><br><span class="line">		sl.tryOptimisticRead();</span><br><span class="line"><span class="comment">// 读入方法局部变量</span></span><br><span class="line">		......</span><br><span class="line"><span class="comment">// 校验 stamp</span></span><br><span class="line">		<span class="keyword">if</span> (!sl.validate(stamp))&#123;</span><br><span class="line"><span class="comment">// 升级为悲观读锁</span></span><br><span class="line">		stamp = sl.readLock();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line"><span class="comment">// 读入方法局部变量</span></span><br><span class="line">		.....</span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line"><span class="comment">// 释放悲观读锁</span></span><br><span class="line">		sl.unlockRead(stamp);</span><br><span class="line">		&#125;</span><br><span class="line">		&#125;</span><br><span class="line"><span class="comment">// 使用方法局部变量执行业务操作</span></span><br><span class="line">		......</span><br></pre></td></tr></table></figure>
+<p>创建分支并切换</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git branch dev</span><br><span class="line">git checkout dev</span><br></pre></td></tr></table></figure>
 
-<h4 id="StampedLock-写模板"><a href="#StampedLock-写模板" class="headerlink" title="StampedLock 写模板"></a>StampedLock 写模板</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">long</span> stamp = sl.writeLock();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">	<span class="comment">// 写共享变量</span></span><br><span class="line">	......</span><br><span class="line">	&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">	sl.unlockWrite(stamp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>git merge 分支合并</p>
+<p>冲突：</p>
+<ul>
+<li>合并失败，运行git merge –abort ，就可以恢复到 merge 之前的状态。</li>
+<li>手动处理冲突</li>
+</ul>
+<p>git log 查看提交日志</p>
+<p>git checkout SHA1 值，我们就可以回到那次提交时的历史。 checkout 后边加上 -b 参数来将其检出为一个全新的分支。</p>
+<h3 id="本地没有仓库"><a href="#本地没有仓库" class="headerlink" title="本地没有仓库"></a>本地没有仓库</h3><p>git clone repo 将远程仓库复制到本地</p>
+<p>git remote 命令，我们可以查看到所有关联到当前仓库的远程仓库</p>
+<p>git remote show (name)命令，我们可以查看某一个远程仓库的详细信息。</p>
+<p>git push 和 git pull 命令，我们可以从服务器端推送和拉取代码。</p>
+<h3 id="本地有仓库"><a href="#本地有仓库" class="headerlink" title="本地有仓库"></a>本地有仓库</h3><p>先在 github 上创建一个空的项目，得到远程仓库地址。然后把它和本地仓库关联起来。</p>
+<p>git init </p>
+<p>git remote add 命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git remote remove origin</span><br><span class="line">git remote add origin2 https://github.com/easychen/litephp.git</span><br><span class="line">git remote show origin2</span><br></pre></td></tr></table></figure>
 
+<p>git pull name branch</p>
+<p>git push name branch</p>
+<p>git stash 将本次修改暂时存入储藏区，并切回到修改之前的版本</p>
+<p>git stash apply ， git 就会自动把之前放到储藏区的最新的那个修改切回来</p>
+<p>git stash list 命令，可以把所有放到储藏区的修改都列出来。</p>
 
       
     </div>
@@ -407,7 +434,7 @@
           
             <a href="/tags/Java/" rel="tag"># Java</a>
           
-            <a href="/tags/并发/" rel="tag"># 并发</a>
+            <a href="/tags/Git/" rel="tag"># Git</a>
           
         </div>
       
@@ -420,8 +447,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/12/08/并发(五)/" rel="next" title="并发(五)">
-                <i class="fa fa-chevron-left"></i> 并发(五)
+              <a href="/2019/12/14/Mysql技术内幕(三)/" rel="next" title="MySQL技术内幕（三）">
+                <i class="fa fa-chevron-left"></i> MySQL技术内幕（三）
               </a>
             
           </div>
@@ -429,10 +456,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/12/14/Mysql技术内幕(三)/" rel="prev" title="MySQL技术内幕（三）">
-                MySQL技术内幕（三） <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -574,7 +597,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发（六）"><span class="nav-number">1.</span> <span class="nav-text">并发（六）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#StampedLock"><span class="nav-number">1.1.</span> <span class="nav-text">StampedLock</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#StampedLock-读模板"><span class="nav-number">1.1.1.</span> <span class="nav-text">StampedLock 读模板</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#StampedLock-写模板"><span class="nav-number">1.1.2.</span> <span class="nav-text">StampedLock 写模板</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Git"><span class="nav-number">1.</span> <span class="nav-text">Git</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#本地没有仓库"><span class="nav-number">1.1.</span> <span class="nav-text">本地没有仓库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#本地有仓库"><span class="nav-number">1.2.</span> <span class="nav-text">本地有仓库</span></a></li></ol></li></ol></div>
             
 
           </div>

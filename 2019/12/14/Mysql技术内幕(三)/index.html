@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Java,并发,">
+  <meta name="keywords" content="数据库,MySQL,">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="并发（六）StampedLockStampedLock 支持三种模式，分别是：  写锁 悲观读锁 乐观读(无锁)  StampedLock 里的写锁和悲观读锁加锁成功之后，都会返回一个 stamp；然后解锁的时候，需要传入这个 stamp。 12345678910111213141516final StampedLock sl =		new StampedLock();// 获取 / 释放悲观读锁">
-<meta name="keywords" content="Java,并发">
+<meta name="description" content="MySQL技术内幕（三）索引：https://segmentfault.com/a/1190000019366328?utm_source=tag-newest mysql日志文件：https://blog.csdn.net/u012834750/article/details/79533866 表InnoDB存储引擎表，每张表都有主键，若没有显示定义主键，则按以下方式创建主键：  非空且唯一的索">
+<meta name="keywords" content="数据库,MySQL">
 <meta property="og:type" content="article">
-<meta property="og:title" content="并发(六)">
-<meta property="og:url" content="http://yoursite.com/2019/12/13/并发(六)/index.html">
+<meta property="og:title" content="MySQL技术内幕（三）">
+<meta property="og:url" content="http://yoursite.com/2019/12/14/Mysql技术内幕(三)/index.html">
 <meta property="og:site_name" content="Chaz Blog">
-<meta property="og:description" content="并发（六）StampedLockStampedLock 支持三种模式，分别是：  写锁 悲观读锁 乐观读(无锁)  StampedLock 里的写锁和悲观读锁加锁成功之后，都会返回一个 stamp；然后解锁的时候，需要传入这个 stamp。 12345678910111213141516final StampedLock sl =		new StampedLock();// 获取 / 释放悲观读锁">
+<meta property="og:description" content="MySQL技术内幕（三）索引：https://segmentfault.com/a/1190000019366328?utm_source=tag-newest mysql日志文件：https://blog.csdn.net/u012834750/article/details/79533866 表InnoDB存储引擎表，每张表都有主键，若没有显示定义主键，则按以下方式创建主键：  非空且唯一的索">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-12-13T08:12:06.748Z">
+<meta property="og:updated_time" content="2019-12-14T09:52:06.485Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="并发(六)">
-<meta name="twitter:description" content="并发（六）StampedLockStampedLock 支持三种模式，分别是：  写锁 悲观读锁 乐观读(无锁)  StampedLock 里的写锁和悲观读锁加锁成功之后，都会返回一个 stamp；然后解锁的时候，需要传入这个 stamp。 12345678910111213141516final StampedLock sl =		new StampedLock();// 获取 / 释放悲观读锁">
+<meta name="twitter:title" content="MySQL技术内幕（三）">
+<meta name="twitter:description" content="MySQL技术内幕（三）索引：https://segmentfault.com/a/1190000019366328?utm_source=tag-newest mysql日志文件：https://blog.csdn.net/u012834750/article/details/79533866 表InnoDB存储引擎表，每张表都有主键，若没有显示定义主键，则按以下方式创建主键：  非空且唯一的索">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/12/13/并发(六)/">
+  <link rel="canonical" href="http://yoursite.com/2019/12/14/Mysql技术内幕(三)/">
 
 
 
 
 
-  <title>并发(六) | Chaz Blog</title>
+  <title>MySQL技术内幕（三） | Chaz Blog</title>
   
 
 
@@ -285,7 +285,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/13/并发(六)/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/14/Mysql技术内幕(三)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="chazdada">
@@ -302,7 +302,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">并发(六)</h1>
+          <h1 class="post-title" itemprop="name headline">MySQL技术内幕（三）</h1>
         
 
         <div class="post-meta">
@@ -314,8 +314,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-13T15:59:42+08:00">
-                2019-12-13
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-14T16:29:25+08:00">
+                2019-12-14
               </time>
             
 
@@ -337,8 +337,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
+                  <a href="/categories/数据库/" itemprop="url" rel="index">
+                    <span itemprop="name">数据库</span>
                   </a>
                 </span>
 
@@ -374,20 +374,32 @@
       
 
       
-        <h2 id="并发（六）"><a href="#并发（六）" class="headerlink" title="并发（六）"></a>并发（六）</h2><h3 id="StampedLock"><a href="#StampedLock" class="headerlink" title="StampedLock"></a>StampedLock</h3><p>StampedLock 支持三种模式，分别是：</p>
+        <h2 id="MySQL技术内幕（三）"><a href="#MySQL技术内幕（三）" class="headerlink" title="MySQL技术内幕（三）"></a>MySQL技术内幕（三）</h2><p>索引：<a href="https://segmentfault.com/a/1190000019366328?utm_source=tag-newest" target="_blank" rel="noopener">https://segmentfault.com/a/1190000019366328?utm_source=tag-newest</a></p>
+<p>mysql日志文件：<a href="https://blog.csdn.net/u012834750/article/details/79533866" target="_blank" rel="noopener">https://blog.csdn.net/u012834750/article/details/79533866</a></p>
+<h3 id="表"><a href="#表" class="headerlink" title="表"></a>表</h3><p>InnoDB存储引擎表，每张表都有主键，若没有显示定义主键，则按以下方式创建主键：</p>
 <ul>
-<li>写锁</li>
-<li>悲观读锁</li>
-<li>乐观读(无锁)</li>
+<li>非空且唯一的索引</li>
+<li>自动创建一个6个字节大小的指针</li>
 </ul>
-<p>StampedLock 里的写锁和悲观读锁加锁成功之后，都会返回一个 stamp；然后解锁的时候，需要传入这个 stamp。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> StampedLock sl =</span><br><span class="line">		<span class="keyword">new</span> StampedLock();</span><br><span class="line"><span class="comment">// 获取 / 释放悲观读锁示意代码</span></span><br><span class="line">		<span class="keyword">long</span> stamp = sl.readLock();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line"><span class="comment">// 省略业务相关代码</span></span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">		sl.unlockRead(stamp);</span><br><span class="line">		&#125;</span><br><span class="line"><span class="comment">// 获取 / 释放写锁示意代码</span></span><br><span class="line">		<span class="keyword">long</span> stamp = sl.writeLock();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line"><span class="comment">// 省略业务相关代码</span></span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">		sl.unlockWrite(stamp);</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
-
-<p>ReadWriteLock 支持多个线程同时读，但是当多个线程同时读的时候，所有的写操作会被阻塞；而 StampedLock 提供的乐观读，是允许一个线程获取写锁的，也就是说不是所有的写操作都被阻塞。</p>
-<h4 id="StampedLock-读模板"><a href="#StampedLock-读模板" class="headerlink" title="StampedLock 读模板"></a>StampedLock 读模板</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> StampedLock sl =</span><br><span class="line">		<span class="keyword">new</span> StampedLock();</span><br><span class="line"><span class="comment">// 乐观读</span></span><br><span class="line">		<span class="keyword">long</span> stamp =</span><br><span class="line">		sl.tryOptimisticRead();</span><br><span class="line"><span class="comment">// 读入方法局部变量</span></span><br><span class="line">		......</span><br><span class="line"><span class="comment">// 校验 stamp</span></span><br><span class="line">		<span class="keyword">if</span> (!sl.validate(stamp))&#123;</span><br><span class="line"><span class="comment">// 升级为悲观读锁</span></span><br><span class="line">		stamp = sl.readLock();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line"><span class="comment">// 读入方法局部变量</span></span><br><span class="line">		.....</span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line"><span class="comment">// 释放悲观读锁</span></span><br><span class="line">		sl.unlockRead(stamp);</span><br><span class="line">		&#125;</span><br><span class="line">		&#125;</span><br><span class="line"><span class="comment">// 使用方法局部变量执行业务操作</span></span><br><span class="line">		......</span><br></pre></td></tr></table></figure>
-
-<h4 id="StampedLock-写模板"><a href="#StampedLock-写模板" class="headerlink" title="StampedLock 写模板"></a>StampedLock 写模板</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">long</span> stamp = sl.writeLock();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">	<span class="comment">// 写共享变量</span></span><br><span class="line">	......</span><br><span class="line">	&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">	sl.unlockWrite(stamp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<h4 id="逻辑存储结构"><a href="#逻辑存储结构" class="headerlink" title="逻辑存储结构"></a>逻辑存储结构</h4><ul>
+<li>表空间<ul>
+<li>默认共享表空间</li>
+<li>innodb_file_per_table 可单独放到一个表空间，但只包含以下数据：数据、索引、插入缓冲，其他类信息如undo信息、系统事务信息、二次写缓存放在原来的共享表空间内</li>
+</ul>
+</li>
+<li>段<ul>
+<li>数据段</li>
+<li>索引段</li>
+<li>回滚段</li>
+</ul>
+</li>
+<li>区<ul>
+<li>64个页，每个页大小16kb，每个区大小1MB</li>
+</ul>
+</li>
+<li>页（块）</li>
+<li>行</li>
+</ul>
 
       
     </div>
@@ -405,9 +417,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Java/" rel="tag"># Java</a>
+            <a href="/tags/数据库/" rel="tag"># 数据库</a>
           
-            <a href="/tags/并发/" rel="tag"># 并发</a>
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
           
         </div>
       
@@ -420,8 +432,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/12/08/并发(五)/" rel="next" title="并发(五)">
-                <i class="fa fa-chevron-left"></i> 并发(五)
+              <a href="/2019/12/13/并发(六)/" rel="next" title="并发(六)">
+                <i class="fa fa-chevron-left"></i> 并发(六)
               </a>
             
           </div>
@@ -430,8 +442,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/12/14/Mysql技术内幕(三)/" rel="prev" title="MySQL技术内幕（三）">
-                MySQL技术内幕（三） <i class="fa fa-chevron-right"></i>
+              <a href="/2019/12/15/Git/" rel="prev" title="Git">
+                Git <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -574,7 +586,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发（六）"><span class="nav-number">1.</span> <span class="nav-text">并发（六）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#StampedLock"><span class="nav-number">1.1.</span> <span class="nav-text">StampedLock</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#StampedLock-读模板"><span class="nav-number">1.1.1.</span> <span class="nav-text">StampedLock 读模板</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#StampedLock-写模板"><span class="nav-number">1.1.2.</span> <span class="nav-text">StampedLock 写模板</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL技术内幕（三）"><span class="nav-number">1.</span> <span class="nav-text">MySQL技术内幕（三）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#表"><span class="nav-number">1.1.</span> <span class="nav-text">表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑存储结构"><span class="nav-number">1.1.1.</span> <span class="nav-text">逻辑存储结构</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
