@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="Java,并发,">
 
 
 
@@ -79,13 +79,18 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Chaz Blog">
-<meta property="og:url" content="http://yoursite.com/archives/2019/11/index.html">
+<meta name="description" content="并发（三）Java线程通用线程生命周期五态模型：  初始状态，指的是线程已经被创建，但是还不允许分配 CPU 执行。这个状态属于编程语言特有的，不过这里所谓的被创建，仅仅是在编程语言层面被创建，而在操作系统层面，真正的线程还没有创建。 可运行状态，指的是线程可以分配 CPU 执行。在这种状态下，真正的操作系统线程已经被成功创建了，所以可以分配 CPU 执行。 当有空闲的 CPU 时，操作系统会将其">
+<meta name="keywords" content="Java,并发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="并发(三)">
+<meta property="og:url" content="http://yoursite.com/2019/12/20/并发(三)/index.html">
 <meta property="og:site_name" content="Chaz Blog">
+<meta property="og:description" content="并发（三）Java线程通用线程生命周期五态模型：  初始状态，指的是线程已经被创建，但是还不允许分配 CPU 执行。这个状态属于编程语言特有的，不过这里所谓的被创建，仅仅是在编程语言层面被创建，而在操作系统层面，真正的线程还没有创建。 可运行状态，指的是线程可以分配 CPU 执行。在这种状态下，真正的操作系统线程已经被成功创建了，所以可以分配 CPU 执行。 当有空闲的 CPU 时，操作系统会将其">
 <meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-12-20T13:12:05.073Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chaz Blog">
+<meta name="twitter:title" content="并发(三)">
+<meta name="twitter:description" content="并发（三）Java线程通用线程生命周期五态模型：  初始状态，指的是线程已经被创建，但是还不允许分配 CPU 执行。这个状态属于编程语言特有的，不过这里所谓的被创建，仅仅是在编程语言层面被创建，而在操作系统层面，真正的线程还没有创建。 可运行状态，指的是线程可以分配 CPU 执行。在这种状态下，真正的操作系统线程已经被成功创建了，所以可以分配 CPU 执行。 当有空闲的 CPU 时，操作系统会将其">
 
 
 
@@ -115,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/archives/2019/11/">
+  <link rel="canonical" href="http://yoursite.com/2019/12/20/并发(三)/">
 
 
 
 
 
-  <title>Archive | Chaz Blog</title>
+  <title>并发(三) | Chaz Blog</title>
   
 
 
@@ -140,7 +145,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -266,282 +271,226 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-      <span class="archive-page-counter">
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/20/并发(三)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chazdada">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaz Blog">
+    </span>
+
+    
+      <header class="post-header">
+
         
         
+          <h1 class="post-title" itemprop="name headline">并发(三)</h1>
         
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-20T21:11:21+08:00">
+                2019-12-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
           
-        
-        Um..! 25 posts in total. Keep on posting.
-      </span>
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
 
-      
-
-        
-        
-        
-
-        
+                
+                
+              
+            </span>
           
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2019">2019</h1>
-          </div>
-        
-        
 
-        
+          
+            
+          
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+          
+          
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/11/28/并发(四)/" itemprop="url">
-              
-                <span itemprop="name">并发(四)</span>
-              
-            </a>
-        
-      </h2>
+          
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-11-28T21:00:12+08:00" content="2019-11-28">
-          11-28
-        </time>
-      </div>
+          
 
-    </header>
-  </article>
+          
 
+        </div>
+      </header>
+    
 
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/11/23/分布式(三)/" itemprop="url">
-              
-                <span itemprop="name">分布式（三）</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-11-23T09:26:22+08:00" content="2019-11-23">
-          11-23
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
       
 
-        
-        
-        
+      
+        <h2 id="并发（三）"><a href="#并发（三）" class="headerlink" title="并发（三）"></a>并发（三）</h2><h3 id="Java线程"><a href="#Java线程" class="headerlink" title="Java线程"></a>Java线程</h3><h4 id="通用线程生命周期"><a href="#通用线程生命周期" class="headerlink" title="通用线程生命周期"></a>通用线程生命周期</h4><p>五态模型：</p>
+<ul>
+<li><strong>初始状态</strong>，指的是线程已经被创建，但是还不允许分配 CPU 执行。这个状态属于编程语<br>言特有的，不过这里所谓的被创建，仅仅是在编程语言层面被创建，而在操作系统层<br>面，真正的线程还没有创建。</li>
+<li><strong>可运行状态</strong>，指的是线程可以分配 CPU 执行。在这种状态下，真正的操作系统线程已经<br>被成功创建了，所以可以分配 CPU 执行。</li>
+<li>当有空闲的 CPU 时，操作系统会将其分配给一个处于可运行状态的线程，被分配到<br>CPU 的线程的状态就转换成了<strong>运行状态</strong>。</li>
+<li>运行状态的线程如果调用一个阻塞的 API（例如以阻塞方式读文件）或者等待某个事件<br>（例如条件变量），那么线程的状态就会转换到<strong>休眠状态</strong>，同时释放 CPU 使用权，休眠<br>状态的线程永远没有机会获得 CPU 使用权。当等待的事件出现了，线程就会从休眠状态<br>转换到可运行状态。</li>
+<li>线程执行完或者出现异常就会进入<strong>终止状态</strong>，终止状态的线程不会切换到其他任何状<br>态，进入终止状态也就意味着线程的生命周期结束了。</li>
+</ul>
+<p>Java 语言里则把可运行状态和运行状态合并</p>
+<h4 id="Java中线程生命周期"><a href="#Java中线程生命周期" class="headerlink" title="Java中线程生命周期"></a>Java中线程生命周期</h4><ul>
+<li>初始状态</li>
+<li>可运行/运行生命状态</li>
+<li>休眠状态<ul>
+<li>BLOCKED<ul>
+<li>线程等待 synchronized 的隐式锁</li>
+<li>线程调用阻塞式 API 时，是不会转换到 BLOCKED 状态，在操作系统层面，线程是会转换到休眠状态的，但是在JVM 层面，Java 线程的状态不会发生变化，也就是说 Java 线程的状态会依然保持RUNNABLE 状态。JVM 层面并不关心操作系统调度相关的状态，因为在 JVM 看来，等待CPU 使用权（操作系统层面此时处于可执行状态）与等待 I/O（操作系统层面此时处于休眠状态）没有区别，都是在等待某个资源，所以都归入了 RUNNABLE 状态。</li>
+</ul>
+</li>
+<li>WAITING<ul>
+<li>获得 synchronized 隐式锁的线程，调用无参数的 Object.wait() 方法</li>
+<li>调用无参数的 Thread.join() 方法</li>
+<li>调用 LockSupport.park() 方法</li>
+</ul>
+</li>
+<li>TIMED-WAITING<ul>
+<li>调用带超时参数的 Thread.sleep(long millis) 方法；</li>
+<li>获得 synchronized 隐式锁的线程，调用带超时参数的 Object.wait(long timeout) 方<br>法；</li>
+<li>调用带超时参数的 Thread.join(long millis) 方法；</li>
+<li>调用带超时参数的 LockSupport.parkNanos(Object blocker, long deadline) 方法；</li>
+<li>调用带超时参数的 LockSupport.parkUntil(long deadline) 方法。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>终止状态<ul>
+<li>stop() 方法会真的杀死线程，不给线程喘息的机会，如果线程持有 ReentrantLock 锁，被<br>stop() 的线程并不会自动调用 ReentrantLock 的 unlock() 去释放锁，那其他线程就再也没<br>机会获得 ReentrantLock 锁，这实在是太危险了。所以该方法就不建议使用了，类似的方<br>法还有 suspend() 和 resume() 方法</li>
+<li>interrupt() 方法仅仅是通知线程，线程有机会执行一些后续操作。当线程处于阻塞状态时被中断，会通过异常的方式通知。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Thread th = Thread.currentThread();</span><br><span class="line">	<span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span>(th.isInterrupted()) &#123;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 省略业务代码无数</span></span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			Thread.sleep(<span class="number">100</span>);</span><br><span class="line">		&#125;<span class="keyword">catch</span> (InterruptedException e)&#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/11/18/机器学习（一）/" itemprop="url">
-              
-                <span itemprop="name">机器学习（一）</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-11-18T14:17:33+08:00" content="2019-11-18">
-          11-18
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+<p>线程在sleep期间被打断了，抛出一个InterruptedException异常，try catch捕捉此异常，应该重置一下中断标示，因为抛出异常后，中断标示会自动清除掉！</p>
+<h4 id="线程的数量"><a href="#线程的数量" class="headerlink" title="线程的数量"></a>线程的数量</h4><p>使用多线程的目的：降低延迟，提高吞吐量</p>
+<p>方法：</p>
+<ul>
+<li>算法优化</li>
+<li>将硬件性能发挥到极致，一个是 I/O，一个是 CPU。简言之，在并发编程领域，提升性能本质上就是提升硬件的利用率，再具体点来说，就是提升 I/O的利用率和 CPU 的利用率。</li>
+</ul>
+<p>线程数量设定：</p>
+<ul>
+<li>对于 CPU 密集型计算，多线程本质上是提升多核 CPU 的利用率，所以对于一个 4 核的CPU，每个核一个线程，理论上创建 4 个线程就可以了，再多创建线程也只是增加线程切换的成本。所以，对于 CPU 密集型的计算场景，理论上“线程的数量 =CPU 核数”就是最合适的。不过在工程上，<strong>线程的数量一般会设置为“CPU 核数 +1”</strong>，这样的话，当线程因为偶尔的内存页失效或其他原因导致阻塞时，这个额外的线程可以顶上，从而保证CPU 的利用率。</li>
+<li>对于 I/O 密集型的计算场景，最佳线程数 =CPU 核数 * [ 1 +（I/O 耗时 / CPU 耗时）]</li>
+</ul>
+<h4 id="局部变量不存在线程安全问题"><a href="#局部变量不存在线程安全问题" class="headerlink" title="局部变量不存在线程安全问题"></a>局部变量不存在线程安全问题</h4><p>局部变量在各自的线程栈里</p>
+<p>方法里的局部变量，因为不会和其他线程共享，所以没有并发问题，这个思路很好，已经成为解决并发问题的一个重要技术，同时还有个响当当的名字叫做<strong>线程封闭</strong>，比较官方的解释是：<strong>仅在单线程内访问数据</strong>。由于不存在共享，所以即便不同步也不会有并发问题，性能杠杠的。</p>
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/11/17/分布式（二）/" itemprop="url">
-              
-                <span itemprop="name">分布式（二）</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-11-17T16:29:36+08:00" content="2019-11-17">
-          11-17
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/11/16/MySQL技术内幕（二）/" itemprop="url">
-              
-                <span itemprop="name">MySQL技术内幕（二）</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-11-16T15:11:18+08:00" content="2019-11-16">
-          11-16
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/11/16/分布式（一）/" itemprop="url">
-              
-                <span itemprop="name">分布式（一）</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-11-16T10:33:04+08:00" content="2019-11-16">
-          11-16
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/11/14/并发(一)/" itemprop="url">
-              
-                <span itemprop="name">并发（一）</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-11-14T21:24:29+08:00" content="2019-11-14">
-          11-14
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
     </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/并发/" rel="tag"># 并发</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/20/并发(二)/" rel="next" title="并发（二）">
+                <i class="fa fa-chevron-left"></i> 并发（二）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -549,6 +498,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -569,8 +522,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -640,6 +602,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发（三）"><span class="nav-number">1.</span> <span class="nav-text">并发（三）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java线程"><span class="nav-number">1.1.</span> <span class="nav-text">Java线程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#通用线程生命周期"><span class="nav-number">1.1.1.</span> <span class="nav-text">通用线程生命周期</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Java中线程生命周期"><span class="nav-number">1.1.2.</span> <span class="nav-text">Java中线程生命周期</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程的数量"><span class="nav-number">1.1.3.</span> <span class="nav-text">线程的数量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#局部变量不存在线程安全问题"><span class="nav-number">1.1.4.</span> <span class="nav-text">局部变量不存在线程安全问题</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -767,6 +745,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
