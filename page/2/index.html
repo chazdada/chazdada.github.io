@@ -281,6 +281,184 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/17/分布式（二）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chazdada">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaz Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/11/17/分布式（二）/" itemprop="url">分布式（二）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-11-17T16:29:36+08:00">
+                2019-11-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/分布式/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="分布式（二）"><a href="#分布式（二）" class="headerlink" title="分布式（二）"></a>分布式（二）</h2><h3 id="分布式互斥"><a href="#分布式互斥" class="headerlink" title="分布式互斥"></a>分布式互斥</h3><h4 id="集中式算法"><a href="#集中式算法" class="headerlink" title="集中式算法"></a>集中式算法</h4><p>引入一个协调者，将所有的请求者进行排序，最早请求的参与者可以使用临界资源</p>
+<p>优点：</p>
+<ul>
+<li>简单、易于实现</li>
+<li>通信高效</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>可用性低</li>
+<li>性能易受协调者影响</li>
+</ul>
+<p>应用场景：</p>
+<p>在协调者的可靠性和性能有一定保证的情况下，可以适用于比较广泛的场景</p>
+<h4 id="分布式算法"><a href="#分布式算法" class="headerlink" title="分布式算法"></a>分布式算法</h4><p>征求其他参与者同意后，可以使用资源</p>
+<p>优点：</p>
+<ul>
+<li>可用性比较高</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>通信成本高</li>
+<li>复杂度高</li>
+</ul>
+<p>应用场景：</p>
+<p>适合临界资源访问频率较低且规模较少的系统</p>
+<h4 id="令牌环算法"><a href="#令牌环算法" class="headerlink" title="令牌环算法"></a>令牌环算法</h4><p>所有参与者组成一个环，轮流使用临界资源</p>
+<p>优点：</p>
+<ul>
+<li>单个参与者通信效率较高</li>
+<li>可用性较高</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>当临界资源使用频率较低时，会带来较多无用通信</li>
+</ul>
+<p>适用场景：</p>
+<p>系统规模较小，并且系统中每个程序使用临界资源频率较高，且使用时间短的场景</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/16/MySQL技术内幕（二）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1908,152 +2086,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/25/深入理解JVM（二）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chazdada">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chaz Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/09/25/深入理解JVM（二）/" itemprop="url">深入理解JVM（二）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-25T16:34:05+08:00">
-                2019-09-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="深入理解-JVM（二）"><a href="#深入理解-JVM（二）" class="headerlink" title="深入理解 JVM（二）"></a>深入理解 JVM（二）</h2><p><strong>编译</strong>：创建完源文件之后，程序先要被JVM中的java编译器进行编译为<strong>.class</strong>文件。java编译一个类时，若这个类所依赖的类还没有被编译，编译器会自动的先编译这个所依赖的类，然后引用；若java编译器在指定的目录下找不到该类所依赖的类的 .class文件或者 .java源文件，就会报”Can’t found sysbol”的异常错误。</p>
-<p>编译后的字节码文件格式主要分为两部分：<strong>常量池和方法字节码</strong>。</p>
-<h3 id="类加载与常量"><a href="#类加载与常量" class="headerlink" title="类加载与常量"></a>类加载与常量</h3><p>常量在编译阶段会存入到调用这个常量的方法所在的类的常量池中。</p>
-<p>本质上，调用类并没有直接引用到定义常量的类，因此并不会触发定义常量的类的初始化。</p>
-<p>当一个常量的值并非编译期间可以确定的，那么其值就不会被放到调用类的常量池中，当这程序在运行时，会导致主动使用这个常量所在的类，显然会导致这个类的初始化。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2104,7 +2136,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">25</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -2115,7 +2147,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -2126,7 +2158,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

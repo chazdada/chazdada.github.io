@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Java,Mybatis,">
+  <meta name="keywords" content="Java,redis,">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="Mybatis 源码分析（一）参考：一本小小的MyBatis源码分析书 Mybatis 入门Mybatis 是什么？ MyBatis 是一种半自动化的 Java 持久层框架（persistence framework），其通过注解或 XML的方式将对象和 SQL 关联起来。半自动是因为和 Hibernate 等一些可自动生成SQL的ORM(Object Relational Mapping)框架相">
-<meta name="keywords" content="Java,Mybatis">
+<meta name="description" content="初始redisRedis是一种基于键值对（key-value）的NoSQL数据库。 Redis中的值可以是由string（字符串）、hash（哈希）、list（列表）、set（集合）、zset（有序集合）、Bitmaps（位图）、HyperLogLog、GEO（地理信息定位）等多种数据结构和算法组成。 Redis提供了两种持久化方式：RDB和AOF，即可以用两种策略将内存的数据保存到硬盘中，这样就">
+<meta name="keywords" content="Java,redis">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Mybatis源码分析（一）">
-<meta property="og:url" content="http://yoursite.com/2019/10/02/Mybatis源码分析（一）/index.html">
+<meta property="og:title" content="Redis--api&amp;字符串">
+<meta property="og:url" content="http://yoursite.com/2019/12/20/redis实战/index.html">
 <meta property="og:site_name" content="Chaz Blog">
-<meta property="og:description" content="Mybatis 源码分析（一）参考：一本小小的MyBatis源码分析书 Mybatis 入门Mybatis 是什么？ MyBatis 是一种半自动化的 Java 持久层框架（persistence framework），其通过注解或 XML的方式将对象和 SQL 关联起来。半自动是因为和 Hibernate 等一些可自动生成SQL的ORM(Object Relational Mapping)框架相">
+<meta property="og:description" content="初始redisRedis是一种基于键值对（key-value）的NoSQL数据库。 Redis中的值可以是由string（字符串）、hash（哈希）、list（列表）、set（集合）、zset（有序集合）、Bitmaps（位图）、HyperLogLog、GEO（地理信息定位）等多种数据结构和算法组成。 Redis提供了两种持久化方式：RDB和AOF，即可以用两种策略将内存的数据保存到硬盘中，这样就">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-10-02T08:45:33.810Z">
+<meta property="og:updated_time" content="2019-12-20T13:05:19.715Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Mybatis源码分析（一）">
-<meta name="twitter:description" content="Mybatis 源码分析（一）参考：一本小小的MyBatis源码分析书 Mybatis 入门Mybatis 是什么？ MyBatis 是一种半自动化的 Java 持久层框架（persistence framework），其通过注解或 XML的方式将对象和 SQL 关联起来。半自动是因为和 Hibernate 等一些可自动生成SQL的ORM(Object Relational Mapping)框架相">
+<meta name="twitter:title" content="Redis--api&amp;字符串">
+<meta name="twitter:description" content="初始redisRedis是一种基于键值对（key-value）的NoSQL数据库。 Redis中的值可以是由string（字符串）、hash（哈希）、list（列表）、set（集合）、zset（有序集合）、Bitmaps（位图）、HyperLogLog、GEO（地理信息定位）等多种数据结构和算法组成。 Redis提供了两种持久化方式：RDB和AOF，即可以用两种策略将内存的数据保存到硬盘中，这样就">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/10/02/Mybatis源码分析（一）/">
+  <link rel="canonical" href="http://yoursite.com/2019/12/20/redis实战/">
 
 
 
 
 
-  <title>Mybatis源码分析（一） | Chaz Blog</title>
+  <title>Redis--api&字符串 | Chaz Blog</title>
   
 
 
@@ -285,7 +285,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/02/Mybatis源码分析（一）/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/20/redis实战/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="chazdada">
@@ -302,7 +302,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Mybatis源码分析（一）</h1>
+          <h1 class="post-title" itemprop="name headline">Redis--api&字符串</h1>
         
 
         <div class="post-meta">
@@ -314,8 +314,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-02T15:41:40+08:00">
-                2019-10-02
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-20T21:04:14+08:00">
+                2019-12-20
               </time>
             
 
@@ -337,8 +337,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
                   </a>
                 </span>
 
@@ -374,26 +374,96 @@
       
 
       
-        <h2 id="Mybatis-源码分析（一）"><a href="#Mybatis-源码分析（一）" class="headerlink" title="Mybatis 源码分析（一）"></a>Mybatis 源码分析（一）</h2><p>参考：一本小小的MyBatis源码分析书</p>
-<h3 id="Mybatis-入门"><a href="#Mybatis-入门" class="headerlink" title="Mybatis 入门"></a>Mybatis 入门</h3><h4 id="Mybatis-是什么？"><a href="#Mybatis-是什么？" class="headerlink" title="Mybatis 是什么？"></a>Mybatis 是什么？</h4><ul>
-<li>MyBatis 是一种半自动化的 Java 持久层框架（persistence framework），其通过注解或 XML<br>的方式将对象和 SQL 关联起来。半自动是因为和 Hibernate 等一些可自动生成SQL的ORM(Object Relational Mapping)框架相比，使用MyBatis需要用户自行维护SQL。</li>
-</ul>
-<h4 id="与-JDBC-对比"><a href="#与-JDBC-对比" class="headerlink" title="与 JDBC 对比"></a>与 JDBC 对比</h4><p>jdbc 缺点:</p>
+        <h3 id="初始redis"><a href="#初始redis" class="headerlink" title="初始redis"></a>初始redis</h3><p>Redis是一种基于键值对（key-value）的NoSQL数据库。</p>
+<p>Redis中的值可以是由string（字符串）、hash（哈希）、list（列表）、set（集合）、zset（有序集合）、Bitmaps（位图）、HyperLogLog、GEO（地理信息定位）等多种数据结构和算法组成。</p>
+<p>Redis提供了两种持久化方式：RDB和AOF，即可以用两种策略将内存的数据保存到硬盘中，这<br>样就保证了数据的可持久性。</p>
+<p>Redis提供了复制功能，实现了多个相同数据的Redis副本，复制功能是分布式Redis的基础。</p>
+<p>redis使用场景：</p>
 <ul>
-<li>代码繁琐，冗余</li>
-<li>拼接 SQL 可能会导致 SQL 出错</li>
-<li>SQL 写在代码中，如果要改动 SQL，就需要到代码中进行更改</li>
-<li>手动从 ResultSet中取出数据</li>
-<li>用户需要自行处理受检异常</li>
+<li>缓存</li>
+<li>排行榜系统</li>
+<li>计数器应用</li>
+<li>社交网络</li>
+<li>消息队列系统</li>
 </ul>
-<p>Mybatis:</p>
+<h3 id="redis-api"><a href="#redis-api" class="headerlink" title="redis api"></a>redis api</h3><h4 id="全局命令"><a href="#全局命令" class="headerlink" title="全局命令"></a>全局命令</h4><p>查看所有键</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keys *</span><br></pre></td></tr></table></figure>
+
+<p>键总数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dbsize</span><br></pre></td></tr></table></figure>
+
+<p>dbsize命令在计算键总数时不会遍历所有键，而是直接获取Redis内置的键总数变量，所以dbsize命令的时间复杂度是O（1）。而keys命令会遍历所有键，所以它的时间复杂度是O（n）</p>
+<p>检查键是否存在</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exists key</span><br></pre></td></tr></table></figure>
+
+<p>删除键</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">del key</span><br></pre></td></tr></table></figure>
+
+<p>键过期</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">expire key seconds</span><br></pre></td></tr></table></figure>
+
+<p>ttl命令观察键的剩余过期</p>
+<p>键的数据结构类型</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">type key</span><br></pre></td></tr></table></figure>
+
+<h4 id="数据结构和内部编码"><a href="#数据结构和内部编码" class="headerlink" title="数据结构和内部编码"></a>数据结构和内部编码</h4><p>object encoding命令查询内部编码</p>
+<p>每种数据结构都有两种以上的内部编码实现，例如list数据结构包含了linkedlist和ziplist两种内部编码。</p>
+<h4 id="单线程架构"><a href="#单线程架构" class="headerlink" title="单线程架构"></a>单线程架构</h4><p>Redis使用了单线程架构和I/O多路复用模型来实现高性能的内存数据库服务。</p>
+<p>Redis是单线程来处理命令的，所以一条命令从客户端达到服务端不会立刻被执行，所有命令都会进入一个队列，所以命令执行顺序不确定。</p>
+<p>为什么单线程还能这么快</p>
 <ul>
-<li>SqlSessionFactory 是一个工厂类，一旦被创建就应该在应用运行期间一直存在，不应该丢弃或重建。SqlSession 不是线程安全的，所以不应被多线程共享。官方推荐的使用方式是有按需创建，用完即销毁。</li>
-<li>使用 MyBatis 无需处理受检异常</li>
-<li>SQL 写在配置文件中，进行集中管理，利于维护。同时将 SQL 从代码中剥离，在提高代码的可读性的同时，也避免了拼接 SQL 可能会导致的错误</li>
-<li>将查询结果映射为相应的对象</li>
+<li>纯内存访问</li>
+<li>非阻塞I/O，Redis使用epoll作为I/O多路复用技术的实现，再加上Redis自身的事件处理模型将epoll中的连接、读写、关闭都转换为事件，不在网络I/O上浪费过多的时间。IO：<a href="https://www.cnblogs.com/cainingning/p/9556642.html" target="_blank" rel="noopener">https://www.cnblogs.com/cainingning/p/9556642.html</a>   <a href="https://www.cnblogs.com/jeakeven/p/5435916.html" target="_blank" rel="noopener">https://www.cnblogs.com/jeakeven/p/5435916.html</a></li>
+<li>单线程避免了线程切换和竞态产生的消耗。</li>
 </ul>
-<p>JDBC 可看做是一种基础服务，MyBatis 则是构建在基础服务之上的框架。</p>
+<h3 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h3><p>设置值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set key value [ex seconds] [px milliseconds] [nx|xx]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>ex seconds：为键设置秒级过期时间。</li>
+<li>px milliseconds：为键设置毫秒级过期时间。</li>
+<li>nx：键必须不存在，才可以设置成功，用于添加。</li>
+<li>xx：与nx相反，键必须存在，才可以设置成功，用于更新。</li>
+</ul>
+<p>获取值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get key</span><br></pre></td></tr></table></figure>
+
+<p>批量设置值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mset key value [key value ...]</span><br><span class="line">mget key [key ...]</span><br></pre></td></tr></table></figure>
+
+<p>批量操作命令可以有效提高开发效率,减少运行时间。</p>
+<p>计数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">incr key</span><br></pre></td></tr></table></figure>
+
+<p>key+1</p>
+<p>decr:-     incrby   decrby  incrbyfloat</p>
+<p>追加值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">append key value</span><br></pre></td></tr></table></figure>
+
+<p>向字符串尾部追加值</p>
+<p>字符串长度</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strlen key</span><br></pre></td></tr></table></figure>
+
+<p>设置并返回原值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getset key value</span><br></pre></td></tr></table></figure>
+
+<p>设置指定位置的字符</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setrange key offest value</span><br></pre></td></tr></table></figure>
+
+<p>获取部分字符串</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getrange key start end</span><br></pre></td></tr></table></figure>
+
+<h4 id="内部编码"><a href="#内部编码" class="headerlink" title="内部编码"></a>内部编码</h4><p>int：8个字节的长整型</p>
+<p>embstr：小于等于39个字节的字符串</p>
+<p>raw：大于39个字节的字符串</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">object encoding key</span><br><span class="line">查看内部编码实现</span><br></pre></td></tr></table></figure>
+
+<p>使用场景</p>
+<h5 id="缓存功能"><a href="#缓存功能" class="headerlink" title="缓存功能"></a>缓存功能</h5><p>redis作为缓存层，mysql作为存储层，redis支撑高并发，加速读写和降低后端压力。</p>
+<p>推荐命名方式  业务名:对象名​：id:[属性]​</p>
+<h5 id="计数"><a href="#计数" class="headerlink" title="计数"></a>计数</h5><p>incr key</p>
+<h5 id="共享session"><a href="#共享session" class="headerlink" title="共享session"></a>共享session</h5><p>将用户session保存到redis中</p>
+<h5 id="限速"><a href="#限速" class="headerlink" title="限速"></a>限速</h5><p>为key设置过期时间</p>
 
       
     </div>
@@ -413,7 +483,7 @@
           
             <a href="/tags/Java/" rel="tag"># Java</a>
           
-            <a href="/tags/Mybatis/" rel="tag"># Mybatis</a>
+            <a href="/tags/redis/" rel="tag"># redis</a>
           
         </div>
       
@@ -426,8 +496,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/09/25/深入理解JVM（二）/" rel="next" title="深入理解JVM（二）">
-                <i class="fa fa-chevron-left"></i> 深入理解JVM（二）
+              <a href="/2019/12/15/Git/" rel="next" title="Git">
+                <i class="fa fa-chevron-left"></i> Git
               </a>
             
           </div>
@@ -435,10 +505,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/10/04/数据库（一）/" rel="prev" title="数据库（一）">
-                数据库（一） <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -580,7 +646,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Mybatis-源码分析（一）"><span class="nav-number">1.</span> <span class="nav-text">Mybatis 源码分析（一）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Mybatis-入门"><span class="nav-number">1.1.</span> <span class="nav-text">Mybatis 入门</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Mybatis-是什么？"><span class="nav-number">1.1.1.</span> <span class="nav-text">Mybatis 是什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#与-JDBC-对比"><span class="nav-number">1.1.2.</span> <span class="nav-text">与 JDBC 对比</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#初始redis"><span class="nav-number">1.</span> <span class="nav-text">初始redis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#redis-api"><span class="nav-number">2.</span> <span class="nav-text">redis api</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#全局命令"><span class="nav-number">2.1.</span> <span class="nav-text">全局命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据结构和内部编码"><span class="nav-number">2.2.</span> <span class="nav-text">数据结构和内部编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#单线程架构"><span class="nav-number">2.3.</span> <span class="nav-text">单线程架构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串"><span class="nav-number">3.</span> <span class="nav-text">字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#内部编码"><span class="nav-number">3.1.</span> <span class="nav-text">内部编码</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#缓存功能"><span class="nav-number">3.1.1.</span> <span class="nav-text">缓存功能</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#计数"><span class="nav-number">3.1.2.</span> <span class="nav-text">计数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#共享session"><span class="nav-number">3.1.3.</span> <span class="nav-text">共享session</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#限速"><span class="nav-number">3.1.4.</span> <span class="nav-text">限速</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[Redis--api&字符串]]></title>
+    <url>%2F2019%2F12%2F20%2Fredis%E5%AE%9E%E6%88%98%2F</url>
+    <content type="text"><![CDATA[初始redisRedis是一种基于键值对（key-value）的NoSQL数据库。 Redis中的值可以是由string（字符串）、hash（哈希）、list（列表）、set（集合）、zset（有序集合）、Bitmaps（位图）、HyperLogLog、GEO（地理信息定位）等多种数据结构和算法组成。 Redis提供了两种持久化方式：RDB和AOF，即可以用两种策略将内存的数据保存到硬盘中，这样就保证了数据的可持久性。 Redis提供了复制功能，实现了多个相同数据的Redis副本，复制功能是分布式Redis的基础。 redis使用场景： 缓存 排行榜系统 计数器应用 社交网络 消息队列系统 redis api全局命令查看所有键 1keys * 键总数 1dbsize dbsize命令在计算键总数时不会遍历所有键，而是直接获取Redis内置的键总数变量，所以dbsize命令的时间复杂度是O（1）。而keys命令会遍历所有键，所以它的时间复杂度是O（n） 检查键是否存在 1exists key 删除键 1del key 键过期 1expire key seconds ttl命令观察键的剩余过期 键的数据结构类型 1type key 数据结构和内部编码object encoding命令查询内部编码 每种数据结构都有两种以上的内部编码实现，例如list数据结构包含了linkedlist和ziplist两种内部编码。 单线程架构Redis使用了单线程架构和I/O多路复用模型来实现高性能的内存数据库服务。 Redis是单线程来处理命令的，所以一条命令从客户端达到服务端不会立刻被执行，所有命令都会进入一个队列，所以命令执行顺序不确定。 为什么单线程还能这么快 纯内存访问 非阻塞I/O，Redis使用epoll作为I/O多路复用技术的实现，再加上Redis自身的事件处理模型将epoll中的连接、读写、关闭都转换为事件，不在网络I/O上浪费过多的时间。IO：https://www.cnblogs.com/cainingning/p/9556642.html https://www.cnblogs.com/jeakeven/p/5435916.html 单线程避免了线程切换和竞态产生的消耗。 字符串设置值 1set key value [ex seconds] [px milliseconds] [nx|xx] ex seconds：为键设置秒级过期时间。 px milliseconds：为键设置毫秒级过期时间。 nx：键必须不存在，才可以设置成功，用于添加。 xx：与nx相反，键必须存在，才可以设置成功，用于更新。 获取值 1get key 批量设置值 12mset key value [key value ...]mget key [key ...] 批量操作命令可以有效提高开发效率,减少运行时间。 计数 1incr key key+1 decr:- incrby decrby incrbyfloat 追加值 1append key value 向字符串尾部追加值 字符串长度 1strlen key 设置并返回原值 1getset key value 设置指定位置的字符 1setrange key offest value 获取部分字符串 1getrange key start end 内部编码int：8个字节的长整型 embstr：小于等于39个字节的字符串 raw：大于39个字节的字符串 12object encoding key查看内部编码实现 使用场景 缓存功能redis作为缓存层，mysql作为存储层，redis支撑高并发，加速读写和降低后端压力。 推荐命名方式 业务名:对象名​：id:[属性]​ 计数incr key 共享session将用户session保存到redis中 限速为key设置过期时间]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[Git]]></title>
     <url>%2F2019%2F12%2F15%2FGit%2F</url>
     <content type="text"><![CDATA[Git .git object 全增量文件所在地，目录名+里面文件名为全增量的文件名 123git cat-file -p 61ac375fc5565c8a763d942dc599fd34128bdb3761 目录名 ac375fc5565c8a763d942dc599fd34128bdb37文件名查看文件内容 index文件是暂存区 12git ls-files --stage查看内容 HEAD文件描述了当前分支上 Head 的位置 12git config --global user.email &quot;easychen@gmail.com&quot;git config --global user.name &quot;Easy&quot; 创建分支并切换 12git branch devgit checkout dev git merge 分支合并 冲突： 合并失败，运行git merge –abort ，就可以恢复到 merge 之前的状态。 手动处理冲突 git log 查看提交日志 git checkout SHA1 值，我们就可以回到那次提交时的历史。 checkout 后边加上 -b 参数来将其检出为一个全新的分支。 本地没有仓库git clone repo 将远程仓库复制到本地 git remote 命令，我们可以查看到所有关联到当前仓库的远程仓库 git remote show (name)命令，我们可以查看某一个远程仓库的详细信息。 git push 和 git pull 命令，我们可以从服务器端推送和拉取代码。 本地有仓库先在 github 上创建一个空的项目，得到远程仓库地址。然后把它和本地仓库关联起来。 git init git remote add 命令 123git remote remove origingit remote add origin2 https://github.com/easychen/litephp.gitgit remote show origin2 git pull name branch git push name branch git stash 将本次修改暂时存入储藏区，并切回到修改之前的版本 git stash apply ， git 就会自动把之前放到储藏区的最新的那个修改切回来 git stash list 命令，可以把所有放到储藏区的修改都列出来。]]></content>
