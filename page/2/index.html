@@ -281,6 +281,202 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/23/分布式(三)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chazdada">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaz Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/11/23/分布式(三)/" itemprop="url">分布式（三）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-11-23T09:26:22+08:00">
+                2019-11-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/分布式/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="分布式（三）"><a href="#分布式（三）" class="headerlink" title="分布式（三）"></a>分布式（三）</h2><h3 id="分布式选举"><a href="#分布式选举" class="headerlink" title="分布式选举"></a>分布式选举</h3><p>集群一般是由两个或两个以上的服务器组建而成，每个服务器都是一个节点。数据库集群提供了读写功能，管理集群提供了管理、故障恢复等功能。</p>
+<p>协同，需要选举“领导”来管理和调控，“领导”称为主节点，选“领导”的过程在分布式领域中叫作分布式选举。</p>
+<h4 id="分布式选举算法"><a href="#分布式选举算法" class="headerlink" title="分布式选举算法"></a>分布式选举算法</h4><h5 id="Bully-算法"><a href="#Bully-算法" class="headerlink" title="Bully 算法"></a>Bully 算法</h5><p>在所有活着的节点中，选取 ID 最大的节点作为主节点。<br>在 Bully 算法中，节点的角色有两种：普通节点和主节点。初始化时，所有节点都是平等的，都是普通节点，并且都有成为主的权利。但是，当选主成功后，有且仅有一个节点成为主节点，其他所有节点都是普通节点。当且仅当主节点故障或与其他节点失去联系后，才会重新选主。</p>
+<p>选举过程需要传递3种消息</p>
+<ul>
+<li>Election 消息，用于发起选举；</li>
+<li>Alive 消息，对 Election 消息的应答；</li>
+<li>Victory 消息，竞选成功的主节点向其他节点发送的宣誓主权的消息。</li>
+</ul>
+<p>假设条件是，集群中每个节点均知道其他节点的 ID</p>
+<p>步骤：</p>
+<ul>
+<li>集群中每个节点判断自己的 ID 是否为当前活着的节点中 ID 最大的，如果是，则直接向其他节点发送 Victory 消息，宣誓自己的主权；</li>
+<li>如果自己不是当前活着的节点中 ID 最大的，则向比自己 ID 大的所有节点发送Election 消息，并等待其他节点的回复；</li>
+<li>若在给定的时间范围内，本节点没有收到其他节点回复的 Alive 消息，则认为自己成为主节点，并向其他节点发送 Victory 消息，宣誓自己成为主节点；若接收到来自比自己ID 大的节点的 Alive 消息，则等待其他节点发送 Victory 消息；</li>
+<li>若本节点收到比自己 ID 小的节点发送的 Election 消息，则回复一个 Alive 消息，告知其他节点，我比你大，重新选举。</li>
+</ul>
+<p>MongoDB 的副本集故障转移功能</p>
+<h5 id="Raft-算法"><a href="#Raft-算法" class="headerlink" title="Raft 算法"></a>Raft 算法</h5><p>多数派投票选举算法,少数服从多数</p>
+<p>集群节点的角色有 3 种：</p>
+<ul>
+<li>Leader，即主节点，同一时刻只有一个 Leader，负责协调和管理其他节点；</li>
+<li>Candidate，即候选者，每一个节点都可以成为 Candidate，节点在该角色下才可以被<br>选为新的 Leader；</li>
+<li>Follower，Leader 的跟随者，不可以发起选举。</li>
+</ul>
+<p>选举流程：</p>
+<ul>
+<li><p>初始化时，所有节点均为 Follower 状态。</p>
+</li>
+<li><p>开始选主时，所有节点的状态由 Follower 转化为 Candidate，并向其他节点发送选举<br>请求。</p>
+</li>
+<li><p>其他节点根据接收到的选举请求的先后顺序，回复是否同意成为主。这里需要注意的<br>是，在每一轮选举中，一个节点只能投出一张票。</p>
+</li>
+<li><p>若发起选举请求的节点获得超过一半的投票，则成为主节点，其状态转化为 Leader，<br>其他节点的状态则由 Candidate 降为 Follower。Leader 节点与 Follower 节点之间会<br>定期发送心跳包，以检测主节点是否活着。</p>
+</li>
+<li><p>当 Leader 节点的任期到了，即发现其他服务器开始下一轮选主周期时，Leader 节点<br>的状态由 Leader 降级为 Follower，进入新一轮选主。</p>
+<p>Kubernetes</p>
+</li>
+</ul>
+<h5 id="ZAB-算法"><a href="#ZAB-算法" class="headerlink" title="ZAB 算法"></a>ZAB 算法</h5><p>ZAB（ZooKeeper Atomic Broadcast）选举算法是为 ZooKeeper 实现分布式协调功能而设计的。相较于 Raft 算法的投票机制，ZAB 算法增加了通过节点 ID 和数据 ID 作为参考进行选主，节点 ID 和数据 ID 越大，表示数据越新，优先成为主。相比较于 Raft 算法，ZAB 算法尽可能保证数据的最新性。所以，ZAB 算法可以说是对 Raft 算法的改进。</p>
+<p>集群中每个节点拥有 3 种角色：</p>
+<ul>
+<li>Leader，主节点；</li>
+<li>Follower，跟随者节点；</li>
+<li>Observer，观察者，无投票权。</li>
+</ul>
+<p>集群中的节点拥有 4 个状态：</p>
+<ul>
+<li>Looking 状态，即选举状态。当节点处于该状态时，它会认为当前集群中没有 Leader，<br>因此自己进入选举状态。</li>
+<li>Leading 状态，即领导者状态，表示已经选出主，且当前节点为 Leader。</li>
+<li>Following 状态，即跟随者状态，集群中已经选出主后，其他非主节点状态更新为Following，表示对 Leader 的追随。</li>
+<li>Observing 状态，即观察者状态，表示当前节点为 Observer，持观望态度，没有投票权和选举权。</li>
+</ul>
+<p>每个节点都有一个唯一的三元组 (server_id, server_zxID, epoch)，其中server_id 表示本节点的唯一 ID；server_zxID 表示本节点存放的数据 ID，数据 ID 越大表示数据越新，选举权重越大；epoch 表示当前选取轮数，一般用逻辑时钟表示。ZAB 选举算法的核心是“少数服从多数，ID 大的节点优先成为主”，因此选举过程中通过<br>(vote_id, vote_zxID) 来表明投票给哪个节点，其中 vote_id 表示被投票节点的 ID，vote_zxID 表示被投票节点的服务器 zxID。<strong>ZAB 算法选主的原则是：server_zxID 最大者成为 Leader；若 server_zxID 相同，则 server_id 最大者成为 Leader。</strong></p>
+<p>Raft选主算法通常采用奇数节点</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/18/机器学习（一）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1886,228 +2082,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/数据库（一）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chazdada">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chaz Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/10/04/数据库（一）/" itemprop="url">数据库（一）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T15:15:12+08:00">
-                2019-10-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/数据库/" itemprop="url" rel="index">
-                    <span itemprop="name">数据库</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="数据库（一）"><a href="#数据库（一）" class="headerlink" title="数据库（一）"></a>数据库（一）</h2><h3 id="数据库概念"><a href="#数据库概念" class="headerlink" title="数据库概念"></a>数据库概念</h3><p>文件处理系统弊端：</p>
-<ul>
-<li>数据的冗余和不一致</li>
-<li>数据访问困难</li>
-<li>数据孤立</li>
-<li>完整性问题（约束）</li>
-<li>原子性问题（例如转账操作）</li>
-<li>并发访问异常</li>
-<li>安全性问题</li>
-</ul>
-<p>数据库系统 = 数据 + 修改数据的程序</p>
-<h4 id="数据视图"><a href="#数据视图" class="headerlink" title="数据视图"></a>数据视图</h4><p>抽象视图：隐藏数据存储和维护的细节</p>
-<h5 id="数据抽象"><a href="#数据抽象" class="headerlink" title="数据抽象"></a>数据抽象</h5><ul>
-<li>物理层：详细描述底层复杂结构</li>
-<li>逻辑层</li>
-<li>视图层</li>
-</ul>
-<h5 id="实例和模式"><a href="#实例和模式" class="headerlink" title="实例和模式"></a>实例和模式</h5><p>实例：存储在数据库信息的集合</p>
-<p>模式：数据库的总体设计</p>
-<ul>
-<li>物理模式</li>
-<li>逻辑模式</li>
-<li>子模式</li>
-</ul>
-<h5 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h5><p>数据模型是一种描述数据、数据联系、数据语义以及一致性约束的概念工具的集合。数据模型提供了一种描述物理层、逻辑层以及视图层数据库设计的方式。</p>
-<ul>
-<li>关系模型</li>
-<li>E-R模型</li>
-<li>基于对象的数据模型</li>
-<li>半结构化数据模型</li>
-</ul>
-<h4 id="数据库语言"><a href="#数据库语言" class="headerlink" title="数据库语言"></a>数据库语言</h4><ul>
-<li><p>数据操纵语言（DML）</p>
-<p>增删改查</p>
-</li>
-<li><p>数据定义语言（DDL）</p>
-<p>数据存储与定义</p>
-<ul>
-<li>域约束</li>
-<li>参照完整性</li>
-<li>断言</li>
-<li>授权</li>
-</ul>
-</li>
-</ul>
-<p>DDL的输出放入数据字典中，数据字典包含了元数据。</p>
-<h4 id="数据存储与查询"><a href="#数据存储与查询" class="headerlink" title="数据存储与查询"></a>数据存储与查询</h4><p>数据库系统的功能部件大致可以分为存储管理器和查询处理部件</p>
-<ul>
-<li><p>存储管理器：与操作系统文件系统交互</p>
-<ul>
-<li>权限及完整性管理器：完整性约束，用户权限</li>
-<li>事务管理器：事务的执行</li>
-<li>文件管理器：磁盘存储与分配</li>
-<li>缓冲区管理器：决定哪些数据从磁盘上转移到内存缓冲区中</li>
-</ul>
-<p>实现的数据结构：</p>
-<ul>
-<li>数据文件：数据库本身</li>
-<li>数据字典：数据库模式，元数据：数据的数据</li>
-<li>索引</li>
-</ul>
-</li>
-<li><p>查询处理器</p>
-<ul>
-<li>DDL解释器：解释DDL语句并记录在数据字典</li>
-<li>DML编译器：翻译成执行方案，产生低级指令</li>
-<li>查询执行引擎：执行低级指令</li>
-</ul>
-</li>
-</ul>
-<h4 id="事务管理"><a href="#事务管理" class="headerlink" title="事务管理"></a>事务管理</h4><ul>
-<li>一致性</li>
-<li>原子性</li>
-<li>持久性</li>
-</ul>
-<p>事务：数据库应用中完成单一逻辑功能的操作集合</p>
-<p>事务管理器：</p>
-<ul>
-<li>并发控制管理器</li>
-<li>恢复管理器</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2158,7 +2132,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-count">27</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

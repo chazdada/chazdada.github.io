@@ -281,6 +281,228 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/数据库（一）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chazdada">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaz Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/10/04/数据库（一）/" itemprop="url">数据库（一）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T15:15:12+08:00">
+                2019-10-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/数据库/" itemprop="url" rel="index">
+                    <span itemprop="name">数据库</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="数据库（一）"><a href="#数据库（一）" class="headerlink" title="数据库（一）"></a>数据库（一）</h2><h3 id="数据库概念"><a href="#数据库概念" class="headerlink" title="数据库概念"></a>数据库概念</h3><p>文件处理系统弊端：</p>
+<ul>
+<li>数据的冗余和不一致</li>
+<li>数据访问困难</li>
+<li>数据孤立</li>
+<li>完整性问题（约束）</li>
+<li>原子性问题（例如转账操作）</li>
+<li>并发访问异常</li>
+<li>安全性问题</li>
+</ul>
+<p>数据库系统 = 数据 + 修改数据的程序</p>
+<h4 id="数据视图"><a href="#数据视图" class="headerlink" title="数据视图"></a>数据视图</h4><p>抽象视图：隐藏数据存储和维护的细节</p>
+<h5 id="数据抽象"><a href="#数据抽象" class="headerlink" title="数据抽象"></a>数据抽象</h5><ul>
+<li>物理层：详细描述底层复杂结构</li>
+<li>逻辑层</li>
+<li>视图层</li>
+</ul>
+<h5 id="实例和模式"><a href="#实例和模式" class="headerlink" title="实例和模式"></a>实例和模式</h5><p>实例：存储在数据库信息的集合</p>
+<p>模式：数据库的总体设计</p>
+<ul>
+<li>物理模式</li>
+<li>逻辑模式</li>
+<li>子模式</li>
+</ul>
+<h5 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h5><p>数据模型是一种描述数据、数据联系、数据语义以及一致性约束的概念工具的集合。数据模型提供了一种描述物理层、逻辑层以及视图层数据库设计的方式。</p>
+<ul>
+<li>关系模型</li>
+<li>E-R模型</li>
+<li>基于对象的数据模型</li>
+<li>半结构化数据模型</li>
+</ul>
+<h4 id="数据库语言"><a href="#数据库语言" class="headerlink" title="数据库语言"></a>数据库语言</h4><ul>
+<li><p>数据操纵语言（DML）</p>
+<p>增删改查</p>
+</li>
+<li><p>数据定义语言（DDL）</p>
+<p>数据存储与定义</p>
+<ul>
+<li>域约束</li>
+<li>参照完整性</li>
+<li>断言</li>
+<li>授权</li>
+</ul>
+</li>
+</ul>
+<p>DDL的输出放入数据字典中，数据字典包含了元数据。</p>
+<h4 id="数据存储与查询"><a href="#数据存储与查询" class="headerlink" title="数据存储与查询"></a>数据存储与查询</h4><p>数据库系统的功能部件大致可以分为存储管理器和查询处理部件</p>
+<ul>
+<li><p>存储管理器：与操作系统文件系统交互</p>
+<ul>
+<li>权限及完整性管理器：完整性约束，用户权限</li>
+<li>事务管理器：事务的执行</li>
+<li>文件管理器：磁盘存储与分配</li>
+<li>缓冲区管理器：决定哪些数据从磁盘上转移到内存缓冲区中</li>
+</ul>
+<p>实现的数据结构：</p>
+<ul>
+<li>数据文件：数据库本身</li>
+<li>数据字典：数据库模式，元数据：数据的数据</li>
+<li>索引</li>
+</ul>
+</li>
+<li><p>查询处理器</p>
+<ul>
+<li>DDL解释器：解释DDL语句并记录在数据字典</li>
+<li>DML编译器：翻译成执行方案，产生低级指令</li>
+<li>查询执行引擎：执行低级指令</li>
+</ul>
+</li>
+</ul>
+<h4 id="事务管理"><a href="#事务管理" class="headerlink" title="事务管理"></a>事务管理</h4><ul>
+<li>一致性</li>
+<li>原子性</li>
+<li>持久性</li>
+</ul>
+<p>事务：数据库应用中完成单一逻辑功能的操作集合</p>
+<p>事务管理器：</p>
+<ul>
+<li>并发控制管理器</li>
+<li>恢复管理器</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/02/Mybatis源码分析（一）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1379,7 +1601,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-count">27</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
