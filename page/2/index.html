@@ -281,6 +281,188 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/28/并发(四)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chazdada">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaz Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/11/28/并发(四)/" itemprop="url">并发(四)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-11-28T21:00:12+08:00">
+                2019-11-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="并发（四）"><a href="#并发（四）" class="headerlink" title="并发（四）"></a>并发（四）</h2><p>并发两大问题：</p>
+<ul>
+<li>互斥 ——  lock</li>
+<li>同步 —— condition</li>
+</ul>
+<h3 id="再造管程"><a href="#再造管程" class="headerlink" title="再造管程"></a>再造管程</h3><p>原因：一是性能，二是 synchronized 无法解决死锁问题</p>
+<p>synchronized 申请资源的时候，如果申请不到，线程直接进入阻塞状态了，而线程进入阻塞状态，啥都干不了，也释放不了线程已经占有的资源。</p>
+<p>解决的三种方案：</p>
+<ul>
+<li>能够响应中断。synchronized 的问题是，持有锁 A 后，如果尝试获取锁 B 失败，那么线程就进入阻塞状态，一旦发生死锁，就没有任何机会来唤醒阻塞的线程。但如果阻塞状态的线程能够响应中断信号，也就是说当我们给阻塞的线程发送中断信号的时候，能够唤醒它，那它就有机会释放曾经持有的锁 A。</li>
+<li>支持超时。如果线程在一段时间之内没有获取到锁，不是进入阻塞状态，而是返回一个错误，那这个线程也有机会释放曾经持有的锁。</li>
+<li>非阻塞地获取锁。如果尝试获取锁失败，并不进入阻塞状态，而是直接返回，那这个线程也有机会释放曾经持有的锁。</li>
+</ul>
+<p>Java lock接口三个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 支持中断的 API</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lockInterruptibly</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	<span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line"><span class="comment">// 支持超时的 API</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(<span class="keyword">long</span> time, TimeUnit unit)</span></span></span><br><span class="line"><span class="function">	<span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line"><span class="comment">// 支持非阻塞获取锁的 API</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="保持可见性"><a href="#保持可见性" class="headerlink" title="保持可见性"></a>保持可见性</h3><p>Java 里多线程的可见性是通过 Happens-Before 规则保证的，而 synchronized 之所以能够保证可见性，也是因为有一条 synchronized 相关的规则：synchronized 的解锁 Happens-Before 于后续对这个锁的加锁。</p>
+<p>Java SDK 里面锁的实现非常复杂，原理是：它是利用了 volatile 相关的 Happens-Before 规则。Java SDK里面的 ReentrantLock，内部持有一个 volatile 的成员变量 state，获取锁的时候，会读写state 的值；解锁的时候，也会读写 state 的值。也就是说，在执行 value+=1 之前，程序先读写了一次 volatile 变量 state，在执行 value+=1 之后，又读写了一次 volatile 变量 state。</p>
+<h3 id="可重入锁"><a href="#可重入锁" class="headerlink" title="可重入锁"></a>可重入锁</h3><p>ReentrantLock，这个翻译过来叫可重入锁，所谓可重入锁，指的是线程可以重复获取同一把锁。例如下面代码中，当线程 T1 执行到 ① 处时，已经获取到了锁 rtl ，当在① 处调用 get() 方法时，会在 ② 再次对锁 rtl 执行加锁操作。此时，如果锁 rtl 是可重入的，那么线程 T1 可以再次加锁成功；如果锁 rtl 是不可重入的，那么线程 T1 此时会被阻塞。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">X</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> Lock rtl =</span><br><span class="line">		<span class="keyword">new</span> ReentrantLock();</span><br><span class="line">	<span class="keyword">int</span> value;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 获取锁</span></span><br><span class="line">		rtl.lock(); ②</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> value;</span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">			<span class="comment">// 保证锁能释放</span></span><br><span class="line">			rtl.unlock();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addOne</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 获取锁</span></span><br><span class="line">		rtl.lock();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			value = <span class="number">1</span> + get(); ①</span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">			<span class="comment">// 保证锁能释放</span></span><br><span class="line">			rtl.unlock();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="公平锁与非公平锁"><a href="#公平锁与非公平锁" class="headerlink" title="公平锁与非公平锁"></a>公平锁与非公平锁</h3><p>ReentrantLock 这个类有两个构造函数，一个是无参构造函数，一个是传入 fair 参数的构造函数。fair 参数代表的是锁的公平策略，如果传入 true 就表示需要构造一个公平锁，反之则表示要构造一个非公平锁。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 无参构造函数：默认非公平锁</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ReentrantLock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	sync = <span class="keyword">new</span> NonfairSync();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 根据公平策略参数创建锁</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ReentrantLock</span><span class="params">(<span class="keyword">boolean</span> fair)</span></span>&#123;</span><br><span class="line">	sync = fair ? <span class="keyword">new</span> FairSync()</span><br><span class="line">		: <span class="keyword">new</span> NonfairSync();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>入口等待队列，锁都对应着一个等待队列，如果一个线程没有获得锁，就会进入等待队列，当有线程释放锁的时候，就需要从等待队列中唤醒一个等待的线程。如果是公平锁，唤醒的策略就是谁等待的时间长，就唤醒谁，很公平；如果是非公平锁，则不提供这个公平保证，有可能等待时间短的线程反而先被唤醒。</p>
+<h3 id="使用锁的原则"><a href="#使用锁的原则" class="headerlink" title="使用锁的原则"></a>使用锁的原则</h3><ul>
+<li>永远只在更新对象的成员变量时加锁</li>
+<li>永远只在访问可变的成员变量时加锁</li>
+<li>永远不在调用其他对象的方法时加锁</li>
+</ul>
+<h3 id="条件变量"><a href="#条件变量" class="headerlink" title="条件变量"></a>条件变量</h3><p>Java 语言内置的管程里只有一个条件变量，而 Lock 和 Condition 实现的管程是支持多个条件变量的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BlockedQueue</span>&lt;<span class="title">T</span>&gt;</span>&#123;</span><br><span class="line">	<span class="keyword">final</span> Lock lock =</span><br><span class="line">		<span class="keyword">new</span> ReentrantLock();</span><br><span class="line">	<span class="comment">// 条件变量：队列不满</span></span><br><span class="line">	<span class="keyword">final</span> Condition notFull =</span><br><span class="line">		lock.newCondition();</span><br><span class="line">	<span class="comment">// 条件变量：队列不空</span></span><br><span class="line">	<span class="keyword">final</span> Condition notEmpty =</span><br><span class="line">		lock.newCondition();</span><br><span class="line">	<span class="comment">// 入队</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">enq</span><span class="params">(T x)</span> </span>&#123;</span><br><span class="line">		lock.lock();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">while</span> (队列已满)&#123;</span><br><span class="line">				<span class="comment">// 等待队列不满</span></span><br><span class="line">				notFull.await();</span><br><span class="line">			&#125;</span><br><span class="line">		<span class="comment">// 省略入队操作...</span></span><br><span class="line">		<span class="comment">// 入队后, 通知可出队</span></span><br><span class="line">			notEmpty.signal();</span><br><span class="line">		&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">			lock.unlock();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 出队</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">deq</span><span class="params">()</span></span>&#123;</span><br><span class="line">		lock.lock();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">while</span> (队列已空)&#123;</span><br><span class="line">				<span class="comment">// 等待队列不空</span></span><br><span class="line">				notEmpty.await();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">// 省略出队操作...</span></span><br><span class="line">			<span class="comment">// 出队后，通知可入队</span></span><br><span class="line">				notFull.signal();</span><br><span class="line">			&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">				lock.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="同步与异步"><a href="#同步与异步" class="headerlink" title="同步与异步"></a>同步与异步</h3><p>调用方是否需要等待结果，如果需要等待结果，就是<strong>同步</strong>；如果不需要等待结果，就是<strong>异步</strong>。</p>
+<p>异步实现的两种方式：</p>
+<ul>
+<li><p>调用方创建一个子线程，在子线程中执行方法调用，这种调用我们称为<strong>异步调用</strong>；</p>
+</li>
+<li><p>方法实现的时候，创建一个新的线程执行主要逻辑，主线程直接 return，这种方法我们<br>一般称为<strong>异步方法</strong>。</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/23/分布式(三)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1916,172 +2098,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/05/数据库（二）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chazdada">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chaz Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/10/05/数据库（二）/" itemprop="url">数据库（二）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-05T18:50:10+08:00">
-                2019-10-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/数据库/" itemprop="url" rel="index">
-                    <span itemprop="name">数据库</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="数据库（二）"><a href="#数据库（二）" class="headerlink" title="数据库（二）"></a>数据库（二）</h2><h3 id="关系数据库"><a href="#关系数据库" class="headerlink" title="关系数据库"></a>关系数据库</h3><h4 id="关系数据的结构"><a href="#关系数据的结构" class="headerlink" title="关系数据的结构"></a>关系数据的结构</h4><p>由表的集合构成，表中的一行代表一组值之间的联系。表与关系这个概念紧密相连。</p>
-<p>n个值之间的联系可以用n-元组表示，对应于表中的一行。</p>
-<p>关系&lt;–&gt;表</p>
-<p>元组&lt;–&gt;行</p>
-<p>属性&lt;–&gt;列</p>
-<p>域：关系每个属性允许取值的集合，域要求是原子的</p>
-<p>空值（null）</p>
-<h4 id="数据库模式"><a href="#数据库模式" class="headerlink" title="数据库模式"></a>数据库模式</h4><p>数据库模式：数据库逻辑设计</p>
-<p>数据库实例：数据库数据的快照</p>
-<p>关系模式：类似于类型定义</p>
-<p>关系实例：类似于变量的值</p>
-<h4 id="码（key）"><a href="#码（key）" class="headerlink" title="码（key）"></a>码（key）</h4><p>超码（superkey）：这些属性的组合可以使我们在一个关系中唯一的标识一个元组。</p>
-<p>候选码（candidatekey）：超码的最小子集</p>
-<p>主码（primary key）：由数据库表设计者选中的，用于主要区分不同元组的候选码</p>
-<p>主码应该选择那些值从不和极少发生变化的属性</p>
-<p>外码（foreign key）：一个关系（r1）模式可能在他的属性中包括另一个关系（r2）的主码。r1也被称为外码依赖的参照关系，r2外码的被参照关系。</p>
-<h4 id="关系查询语言"><a href="#关系查询语言" class="headerlink" title="关系查询语言"></a>关系查询语言</h4><ul>
-<li><p>过程化语言</p>
-<p>用户指导系统对数据库进行一系列操作以计算出所需的结果</p>
-</li>
-<li><p>非过程化语言</p>
-<p>用户只需要描述出所需的信息，而不用给出具体过程</p>
-</li>
-</ul>
-<h4 id="关系运算"><a href="#关系运算" class="headerlink" title="关系运算"></a>关系运算</h4><p><img src="guanxi.png" alt></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2132,7 +2148,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -2201,7 +2217,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
