@@ -281,6 +281,176 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/08/并发(五)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chazdada">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaz Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/12/08/并发(五)/" itemprop="url">并发(五)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-08T12:17:07+08:00">
+                2019-12-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="并发（五）"><a href="#并发（五）" class="headerlink" title="并发（五）"></a>并发（五）</h2><h3 id="Semaphore"><a href="#Semaphore" class="headerlink" title="Semaphore"></a>Semaphore</h3><h4 id="信号量模型"><a href="#信号量模型" class="headerlink" title="信号量模型"></a>信号量模型</h4><ul>
+<li>一个计数器</li>
+<li>一个等待队列</li>
+<li>三个方法<ul>
+<li>init：设置计数器的初始值。</li>
+<li>up：计数器的值减 1；如果此时计数器的值小于 0，则当前线程将被阻塞，否则当前线程可以继续执行。</li>
+<li>down：计数器的值加 1；如果此时计数器的值小于或者等于 0，则唤醒等待队列中的一个线程，并将其从等待队列中移除。</li>
+</ul>
+</li>
+</ul>
+<p>Java SDK 里面，信号量模型是由 java.util.concurrent.Semaphore实现的，Semaphore 这个类能够保证这三个方法都是原子操作。</p>
+<p>在 Java SDK 并发包里，down() 和 up() 对应的则是 acquire() 和 release()。</p>
+<p><strong>note</strong>：管程很难实现多个线程同时访问一个并发变量。</p>
+<h4 id="使用–限流器"><a href="#使用–限流器" class="headerlink" title="使用–限流器"></a>使用–限流器</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ObjPool</span>&lt;<span class="title">T</span>, <span class="title">R</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> List&lt;T&gt; pool;</span><br><span class="line">    <span class="comment">// 用信号量实现限流器</span></span><br><span class="line">    <span class="keyword">final</span> Semaphore sem;</span><br><span class="line">    <span class="comment">// 构造函数</span></span><br><span class="line">    ObjPool(<span class="keyword">int</span> size, T t)&#123;</span><br><span class="line">        pool = <span class="keyword">new</span> Vector&lt;T&gt;()&#123;&#125;;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;size; i++)&#123;</span><br><span class="line">            pool.add(t);</span><br><span class="line">        &#125;</span><br><span class="line">        sem = <span class="keyword">new</span> Semaphore(size);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 利用对象池的对象，调用 func</span></span><br><span class="line">    <span class="function">R <span class="title">exec</span><span class="params">(Function&lt;T,R&gt; func)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        T t = <span class="keyword">null</span>;</span><br><span class="line">        sem.acquire();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            t = pool.remove(<span class="number">0</span>);</span><br><span class="line">            <span class="keyword">return</span> func.apply(t);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            pool.add(t);</span><br><span class="line">            sem.release();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ReadWriteLock-实现缓存"><a href="#ReadWriteLock-实现缓存" class="headerlink" title="ReadWriteLock 实现缓存"></a>ReadWriteLock 实现缓存</h3><h4 id="读写锁（读多写少）"><a href="#读写锁（读多写少）" class="headerlink" title="读写锁（读多写少）"></a>读写锁（读多写少）</h4><p>读写锁三条原则：</p>
+<ul>
+<li>允许多个线程同时读共享变量；</li>
+<li>只允许一个线程写共享变量；</li>
+<li>如果一个写线程正在执行写操作，此时禁止读线程读共享变量。</li>
+</ul>
+<p>缓存数据初始化：</p>
+<ul>
+<li>一次性加载的方式</li>
+<li>懒加载–按需加载</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cache</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Map&lt;K, V&gt; m =</span><br><span class="line">            <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    <span class="keyword">final</span> ReadWriteLock rwl =</span><br><span class="line">            <span class="keyword">new</span> ReentrantReadWriteLock();</span><br><span class="line">    <span class="keyword">final</span> Lock r = rwl.readLock();</span><br><span class="line">    <span class="keyword">final</span> Lock w = rwl.writeLock();</span><br><span class="line">    <span class="function">V <span class="title">get</span><span class="params">(K key)</span> </span>&#123;</span><br><span class="line">        V v = <span class="keyword">null</span>;</span><br><span class="line"><span class="comment">// 读缓存</span></span><br><span class="line">        r.lock(); ①</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            v = m.get(key); ②</span><br><span class="line">        &#125; <span class="keyword">finally</span>&#123;</span><br><span class="line">            r.unlock(); ③</span><br><span class="line">        &#125;</span><br><span class="line"><span class="comment">// 缓存中存在，返回</span></span><br><span class="line">        <span class="keyword">if</span>(v != <span class="keyword">null</span>) &#123; ④</span><br><span class="line">            <span class="keyword">return</span> v;</span><br><span class="line">        &#125;</span><br><span class="line"><span class="comment">// 缓存中不存在，查询数据库</span></span><br><span class="line">        w.lock(); ⑤</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line"><span class="comment">// 再次验证</span></span><br><span class="line"><span class="comment">// 其他线程可能已经查询过数据库</span></span><br><span class="line">            v = m.get(key); ⑥</span><br><span class="line">            <span class="keyword">if</span>(v == <span class="keyword">null</span>)&#123; ⑦</span><br><span class="line"><span class="comment">// 查询数据库</span></span><br><span class="line">                v= 省略代码无数</span><br><span class="line">                m.put(key, v);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">finally</span>&#123;</span><br><span class="line">            w.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> v;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先是获取读锁，然后再升级为写锁，叫锁的升级。可惜 ReadWriteLock 并不支持这种升级。ReentrantReadWriteLock获取读锁的时候线程还是持有写锁的，这种锁的降级是支持的。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/28/并发(四)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1942,162 +2112,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/06/java文件路径/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chazdada">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chaz Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/10/06/java文件路径/" itemprop="url">Java文件</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-06T22:33:28+08:00">
-                2019-10-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index">
-                    <span itemprop="name">java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="Java-文件路径"><a href="#Java-文件路径" class="headerlink" title="Java 文件路径"></a>Java 文件路径</h2><ul>
-<li>文件位于项目根目录下</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">InputStream in = <span class="keyword">new</span> BufferedInputStream(<span class="keyword">new</span> FileInputStream(<span class="string">"src/main/resources/test.properties"</span>));</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>文件位于类路径下，可利用<code>Class</code>对象或者<code>ClassLoader</code>对象去在类路径下查找文件</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">InputStream in = p.getClass().getResourceAsStream(<span class="string">"/test.properties"</span>);</span><br><span class="line">InputStream in = p.getClass().getClassLoader().getResourceAsStream(<span class="string">"test.properties"</span>);</span><br></pre></td></tr></table></figure>
-
-<p>注意：</p>
-<ul>
-<li>Class对象的<code>getResourceAsStream(String path)</code>中的path可以以 <code>/</code> 开头，也可以不以 <code>/</code> 开头。若以 <code>/</code> 开头，表示在类路径根目录下查找，不以 <code>/</code> 开头，表示在当前<code>.java</code>文件编译后<code>.class</code>文件所在的目录中找</li>
-<li>ClassLoader对象的<code>getResourceAsStream(String path)</code>中的path<strong>不以/开头！</strong>，表示在类路径根目录下查找</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2148,7 +2162,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-count">29</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
