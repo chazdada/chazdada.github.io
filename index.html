@@ -281,6 +281,208 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/21/并发（七）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chazdada">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaz Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/01/21/并发（七）/" itemprop="url">并发(七)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-01-21T10:22:37+08:00">
+                2020-01-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="并发（七）"><a href="#并发（七）" class="headerlink" title="并发（七）"></a>并发（七）</h2><h3 id="CountDownLatch-和-CyclicBarrier"><a href="#CountDownLatch-和-CyclicBarrier" class="headerlink" title="CountDownLatch 和 CyclicBarrier"></a>CountDownLatch 和 CyclicBarrier</h3><p><strong>任务：优化对账系统</strong></p>
+<p>伪代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(存在未对账订单)&#123;</span><br><span class="line">	<span class="comment">// 查询未对账订单</span></span><br><span class="line">	pos = getPOrders();</span><br><span class="line">	<span class="comment">// 查询派送单</span></span><br><span class="line">	dos = getDOrders();</span><br><span class="line">	<span class="comment">// 执行对账操作</span></span><br><span class="line">	diff = check(pos, dos);</span><br><span class="line">	<span class="comment">// 差异写入差异库</span></span><br><span class="line">	save(diff);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="并行优化对账系统"><a href="#并行优化对账系统" class="headerlink" title="并行优化对账系统"></a>并行优化对账系统</h4><p>查询未对账订单 getPOrders() 和查询派送单 getDOrders() 可以并行处理。</p>
+<p>主线程需要等待线程 T1 和 T2 执行完才能执行 check() 和 save() 这两个操作，为此我们通过调用 T1.join() 和 T2.join() 来实现等待，当 T1 和 T2 线程退出时，调用 T1.join() 和T2.join() 的主线程就会从阻塞态被唤醒，从而执行之后的 check() 和 save()。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">while</span>(存在未对账订单)&#123;</span><br><span class="line"><span class="comment">// 查询未对账订单</span></span><br><span class="line">        Thread T1 = <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            pos = getPOrders();</span><br><span class="line">        &#125;);</span><br><span class="line">        T1.start();</span><br><span class="line"><span class="comment">// 查询派送单</span></span><br><span class="line">        Thread T2 = <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            dos = getDOrders();</span><br><span class="line">        &#125;);</span><br><span class="line">        T2.start();</span><br><span class="line"><span class="comment">// 等待 T1、T2 结束</span></span><br><span class="line">        T1.join();</span><br><span class="line">        T2.join();</span><br><span class="line"><span class="comment">// 执行对账操作</span></span><br><span class="line">        diff = check(pos, dos);</span><br><span class="line"><span class="comment">// 差异写入差异库</span></span><br><span class="line">        save(diff);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="CountDownLatch-实现线程等待"><a href="#CountDownLatch-实现线程等待" class="headerlink" title="CountDownLatch 实现线程等待"></a>CountDownLatch 实现线程等待</h4><p>while 循环里面每次都会创建新的线程，而创建线程可是个耗时的操作。所以最好是创建出来的线程能够循环利用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">Executor executor =</span><br><span class="line">           Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line">   <span class="keyword">while</span>(存在未对账订单)&#123;</span><br><span class="line">       <span class="comment">// 计数器初始化为 2</span></span><br><span class="line">       CountDownLatch latch =</span><br><span class="line">               <span class="keyword">new</span> CountDownLatch(<span class="number">2</span>);</span><br><span class="line">       <span class="comment">// 查询未对账订单</span></span><br><span class="line">       executor.execute(()-&gt; &#123;</span><br><span class="line">           pos = getPOrders();</span><br><span class="line">           latch.countDown();</span><br><span class="line">       &#125;);</span><br><span class="line">       <span class="comment">// 查询派送单</span></span><br><span class="line">       executor.execute(()-&gt; &#123;</span><br><span class="line">           dos = getDOrders();</span><br><span class="line">           latch.countDown();</span><br><span class="line">       &#125;);</span><br><span class="line">       <span class="comment">// 等待两个查询操作结束</span></span><br><span class="line">       latch.await();</span><br><span class="line">       <span class="comment">// 执行对账操作</span></span><br><span class="line">       diff = check(pos, dos);</span><br><span class="line">       <span class="comment">// 差异写入差异库</span></span><br><span class="line">       save(diff);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="CyclicBarrier-实现线程同步"><a href="#CyclicBarrier-实现线程同步" class="headerlink" title="CyclicBarrier 实现线程同步"></a>CyclicBarrier 实现线程同步</h4><p>线程 T1 负责查询订单，当查出一条时，调用 barrier.await() 来将计数器减 1，同时等待计数器变成 0；线程 T2 负责查询派送单，当查出一条时，也调用 barrier.await()来将计数器减 1，同时等待计数器变成 0；当 T1 和 T2 都调用 barrier.await() 的时候，计数器会减到 0，此时 T1 和 T2 就可以执行下一条语句了，同时会调用 barrier 的回调函数来执行对账操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">    <span class="comment">// 订单队列</span></span><br><span class="line">    Vector&lt;P&gt; pos;</span><br><span class="line">    <span class="comment">// 派送单队列</span></span><br><span class="line">    Vector&lt;D&gt; dos;</span><br><span class="line">    <span class="comment">// 执行回调的线程池</span></span><br><span class="line">    Executor executor =</span><br><span class="line">            Executors.newFixedThreadPool(<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">final</span> CyclicBarrier barrier =</span><br><span class="line">            <span class="keyword">new</span> CyclicBarrier(<span class="number">2</span>, ()-&gt;&#123;</span><br><span class="line">                executor.execute(()-&gt;check());</span><br><span class="line">            &#125;);</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">check</span><span class="params">()</span></span>&#123;</span><br><span class="line">        P p = pos.remove(<span class="number">0</span>);</span><br><span class="line">        D d = dos.remove(<span class="number">0</span>);</span><br><span class="line"><span class="comment">// 执行对账操作</span></span><br><span class="line">        diff = check(p, d);</span><br><span class="line"><span class="comment">// 差异写入差异库</span></span><br><span class="line">        save(diff);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">checkAll</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="comment">// 循环查询订单库</span></span><br><span class="line">        Thread T1 = <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            <span class="keyword">while</span>(存在未对账订单)&#123;</span><br><span class="line"><span class="comment">// 查询订单库</span></span><br><span class="line">                pos.add(getPOrders());</span><br><span class="line"><span class="comment">// 等待</span></span><br><span class="line">                barrier.await();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        T1.start();</span><br><span class="line"><span class="comment">// 循环查询运单库</span></span><br><span class="line">        Thread T2 = <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            <span class="keyword">while</span>(存在未对账订单)&#123;</span><br><span class="line"><span class="comment">// 查询运单库</span></span><br><span class="line">                dos.add(getDOrders());</span><br><span class="line"><span class="comment">// 等待</span></span><br><span class="line">                barrier.await();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        T2.start();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="并发容器"><a href="#并发容器" class="headerlink" title="并发容器"></a>并发容器</h3><p>容器：List、Map、Set和Queue</p>
+<p>组合操作需要注意竞态条件问题。组合操作不具备原子性。</p>
+<h4 id="List"><a href="#List" class="headerlink" title="List"></a>List</h4><h5 id="CopyOnWriteArrayList"><a href="#CopyOnWriteArrayList" class="headerlink" title="CopyOnWriteArrayList"></a>CopyOnWriteArrayList</h5><p>CopyOnWriteArrayList 内部维护了一个数组，成员变量 array 就指向这个内部数组，所有的读操作都是基于 array 进行的。</p>
+<p>遍历 array 的同时，还有一个写操作，例如增加元素。CopyOnWriteArrayList 会将 array 复制一份，然后在新复制处理的数组上执行增加元素的操作，执行完之后再将 array 指向这个新的组。</p>
+<p>CopyOnWriteArrayList 仅适用于写操作非常少的场景，而且能够容忍读写的短暂不一致。</p>
+<h4 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h4><h5 id="ConcurrentHashMap-和-ConcurrentSkipListMap"><a href="#ConcurrentHashMap-和-ConcurrentSkipListMap" class="headerlink" title="ConcurrentHashMap 和 ConcurrentSkipListMap"></a>ConcurrentHashMap 和 ConcurrentSkipListMap</h5><p>ConcurrentHashMap 的 key 是无序的，而ConcurrentSkipListMap 的 key 是有序的。</p>
+<table>
+<thead>
+<tr>
+<th align="center">集合类</th>
+<th align="center">Key</th>
+<th align="center">Value</th>
+<th align="center">是否线程安全</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">HashMap</td>
+<td align="center">允许为Null</td>
+<td align="center">允许</td>
+<td align="center">否</td>
+</tr>
+<tr>
+<td align="center">TreeMap</td>
+<td align="center">不允许</td>
+<td align="center">允许</td>
+<td align="center">否</td>
+</tr>
+<tr>
+<td align="center">HashTable</td>
+<td align="center">不允许</td>
+<td align="center">不允许</td>
+<td align="center">是</td>
+</tr>
+<tr>
+<td align="center">ConcurrentHashMap</td>
+<td align="center">不允许</td>
+<td align="center">不允许</td>
+<td align="center">是</td>
+</tr>
+<tr>
+<td align="center">ConcurrentSkipListMap</td>
+<td align="center">不允许</td>
+<td align="center">不允许</td>
+<td align="center">是</td>
+</tr>
+</tbody></table>
+<h4 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h4><h5 id="CopyOnWriteArraySet-和-ConcurrentSkipListSet"><a href="#CopyOnWriteArraySet-和-ConcurrentSkipListSet" class="headerlink" title="CopyOnWriteArraySet 和 ConcurrentSkipListSet"></a>CopyOnWriteArraySet 和 ConcurrentSkipListSet</h5><h4 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h4><p>一个<br>维度是阻塞与非阻塞，所谓阻塞指的是当队列已满时，入队操作阻塞；当队列已空时，出队操作阻塞。另一个维度是单端与双端，单端指的是只能队尾入队，队首出队；而双端指的是队首队尾皆可入队出队。Java 并发包里阻塞队列都用 Blocking 关键字标识，单端队列使用 Queue 标识，双端队列使用 Deque 标识。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/17/leetcode3贪心/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1973,161 +2175,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/13/并发(六)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chazdada">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chaz Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/12/13/并发(六)/" itemprop="url">并发(六)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-13T15:59:42+08:00">
-                2019-12-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="并发（六）"><a href="#并发（六）" class="headerlink" title="并发（六）"></a>并发（六）</h2><h3 id="StampedLock"><a href="#StampedLock" class="headerlink" title="StampedLock"></a>StampedLock</h3><p>StampedLock 支持三种模式，分别是：</p>
-<ul>
-<li>写锁</li>
-<li>悲观读锁</li>
-<li>乐观读(无锁)</li>
-</ul>
-<p>StampedLock 里的写锁和悲观读锁加锁成功之后，都会返回一个 stamp；然后解锁的时候，需要传入这个 stamp。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> StampedLock sl =</span><br><span class="line">		<span class="keyword">new</span> StampedLock();</span><br><span class="line"><span class="comment">// 获取 / 释放悲观读锁示意代码</span></span><br><span class="line">		<span class="keyword">long</span> stamp = sl.readLock();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line"><span class="comment">// 省略业务相关代码</span></span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">		sl.unlockRead(stamp);</span><br><span class="line">		&#125;</span><br><span class="line"><span class="comment">// 获取 / 释放写锁示意代码</span></span><br><span class="line">		<span class="keyword">long</span> stamp = sl.writeLock();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line"><span class="comment">// 省略业务相关代码</span></span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">		sl.unlockWrite(stamp);</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
-
-<p>ReadWriteLock 支持多个线程同时读，但是当多个线程同时读的时候，所有的写操作会被阻塞；而 StampedLock 提供的乐观读，是允许一个线程获取写锁的，也就是说不是所有的写操作都被阻塞。</p>
-<h4 id="StampedLock-读模板"><a href="#StampedLock-读模板" class="headerlink" title="StampedLock 读模板"></a>StampedLock 读模板</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> StampedLock sl =</span><br><span class="line">		<span class="keyword">new</span> StampedLock();</span><br><span class="line"><span class="comment">// 乐观读</span></span><br><span class="line">		<span class="keyword">long</span> stamp =</span><br><span class="line">		sl.tryOptimisticRead();</span><br><span class="line"><span class="comment">// 读入方法局部变量</span></span><br><span class="line">		......</span><br><span class="line"><span class="comment">// 校验 stamp</span></span><br><span class="line">		<span class="keyword">if</span> (!sl.validate(stamp))&#123;</span><br><span class="line"><span class="comment">// 升级为悲观读锁</span></span><br><span class="line">		stamp = sl.readLock();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line"><span class="comment">// 读入方法局部变量</span></span><br><span class="line">		.....</span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line"><span class="comment">// 释放悲观读锁</span></span><br><span class="line">		sl.unlockRead(stamp);</span><br><span class="line">		&#125;</span><br><span class="line">		&#125;</span><br><span class="line"><span class="comment">// 使用方法局部变量执行业务操作</span></span><br><span class="line">		......</span><br></pre></td></tr></table></figure>
-
-<h4 id="StampedLock-写模板"><a href="#StampedLock-写模板" class="headerlink" title="StampedLock 写模板"></a>StampedLock 写模板</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">long</span> stamp = sl.writeLock();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">	<span class="comment">// 写共享变量</span></span><br><span class="line">	......</span><br><span class="line">	&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">	sl.unlockWrite(stamp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2178,7 +2225,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
