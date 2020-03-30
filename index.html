@@ -281,6 +281,251 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/30/jvm1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chazdada">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaz Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/03/30/jvm1/" itemprop="url">初识 JVM</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-03-30T10:06:46+08:00">
+                2020-03-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="初识-JVM"><a href="#初识-JVM" class="headerlink" title="初识 JVM"></a>初识 JVM</h2><h3 id="为什么需要-jvm"><a href="#为什么需要-jvm" class="headerlink" title="为什么需要 jvm"></a>为什么需要 jvm</h3><p>Java 作为一门高级程序语言，它的语法非常复杂，抽象程度也很高。因此，直接在硬件上运行这种复杂的程序并不现实。设计一个面向 Java 语言特性的虚拟机，并通过编译器将 Java 程序转换成该虚拟机所能识别的指令序列，也称 Java 字节码。java 虚拟机可以由硬件实现，但更为常见的是在各个现有平台（如 Windows_x64、Linux_arch64）上提供软件实现。这么做的意义在于，一旦一个程序被转换成 Java 字节码，那么它便可以在不同平台上的虚拟机实现里运行。</p>
+<p>虚拟机的另外一个好处是它带来了一个托管环境（Managed Runtime）。这个托管环境能够代替我们处理一些代码中冗长而且容易出错的部分。其中最广为人知的当属自动内存管理与垃圾回收，这部分内容甚至催生了一波垃圾回收调优的业务。除此之外，托管环境还提供了诸如数组越界、动态类型、安全权限等等的动态检测，使我们免于书写这些无关业务逻辑的代码。</p>
+<h3 id="Java-虚拟机具体是怎样运行-Java-字节码的？"><a href="#Java-虚拟机具体是怎样运行-Java-字节码的？" class="headerlink" title="Java 虚拟机具体是怎样运行 Java 字节码的？"></a>Java 虚拟机具体是怎样运行 Java 字节码的？</h3><p>执行 Java 代码首先需要将它编译而成的 class 文件加载到 Java 虚拟机中。加载后的 Java 类会被存放于方法区（Method Area）中。实际运行时，虚拟机会执行方法区内的代码。</p>
+<p>Java 字节码无法直接执行。因此，Java 虚拟机需要将字节码翻译成机器码。在 HotSpot 里面，上述翻译过程有两种形式：第一种是解释执行，即逐条将字节码翻译成机器码并执行；第二种是即时编译（Just-In-Time compilation，JIT），即将一个方法中包含的所有字节码编译成机器码后再执行。</p>
+<p>前者的优势在于无需等待编译，而后者的优势在于实际运行速度更快。HotSpot 默认采用混合模式，综合了解释执行和即时编译两者的优点。它会先解释执行字节码，而后将其中反复执行的热点代码，以方法为单位进行即时编译。</p>
+<p>HotSpot 采用了多种技术来提升启动性能以及峰值性能，即时编译便是其中最重要的技术之一。对于占据大部分的不常用的代码，无需耗费时间将其编译成机器码，而是采取解释执行的方式运行；另一方面，对于仅占据小部分的热点代码，则可以将其编译成机器码，以达到理想的运行速度。</p>
+<p>HotSpot 内置了多个即时编译器：C1、C2 和 Graal。</p>
+<p>HotSpot 的即时编译是放在额外的编译线程中进行的。HotSpot 会根据 CPU 的数量设置编译线程的数目，并且按 1:2 的比例配置给 C1 及 C2 编译器。在计算资源充足的情况下，字节码的解释执行和即时编译可同时进行。编译完成后的机器码会在下次调用该方法时启用，以替换原本的解释执行。</p>
+<h3 id="java-的基本类型"><a href="#java-的基本类型" class="headerlink" title="java 的基本类型"></a>java 的基本类型</h3><p>8个基本类型支持数值计算，原因主要是基本类型能够在执行效率以及内存使用两方面提升软件性能。</p>
+<p>在 Java 语言规范中，boolean 类型的值只有两种可能，它们分别用符号“true”和“false”来表示。</p>
+<p>在 Java 虚拟机规范中，boolean 类型则被映射成 int 类型。true”被映射为整数 1，而“false”被映射为整数 0。这个编码规则约束了 Java 字节码的具体实现。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>值域</th>
+<th>默认值</th>
+<th>虚拟机内部符号</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>boolean</td>
+<td>{false,true}</td>
+<td>false</td>
+<td>Z</td>
+</tr>
+<tr>
+<td>byte</td>
+<td>[-128,127]</td>
+<td>0</td>
+<td>B</td>
+</tr>
+<tr>
+<td>short</td>
+<td>[-32768,32767]</td>
+<td>0</td>
+<td>S</td>
+</tr>
+<tr>
+<td>char</td>
+<td>[0,65535]</td>
+<td>‘\u0000’</td>
+<td>C</td>
+</tr>
+<tr>
+<td>int</td>
+<td>[-2^31,2^31-1]</td>
+<td>0</td>
+<td>I</td>
+</tr>
+<tr>
+<td>long</td>
+<td>[-2^63,2^63-1]</td>
+<td>0L</td>
+<td>J</td>
+</tr>
+<tr>
+<td>float</td>
+<td>~[-3.4E38,3.4E38]</td>
+<td>+0.0F</td>
+<td>F</td>
+</tr>
+<tr>
+<td>double</td>
+<td>~[-1.8E308,1.8E308]</td>
+<td>+0.0D</td>
+<td>D</td>
+</tr>
+</tbody></table>
+<p>在 Java 中，正无穷和负无穷是有确切的值，在内存中分别等同于十六进制整数 0x7F800000 和 0xFF800000。0x7F800001 这个数字对应的浮点数是 NaN（Not-a-Number）。</p>
+<p>Java 虚拟机每调用一个 Java 方法，便会创建一个栈帧。</p>
+<p>boolean、byte、char、short 这四种类型，在栈上占用的空间和 int 是一样的，和引用类型也是一样的。因此，在 32 位的 HotSpot 中，这些类型在栈上将占用 4 个字节；而在 64 位的 HotSpot 中，他们将占 8 个字节。</p>
+<p>Java 虚拟机的算数运算几乎全部依赖于操作数栈。将堆中的 boolean、byte、char 以及 short 加载到操作数栈上，而后将栈上的值当成 int 类型来运算。</p>
+<h3 id="Java-虚拟机是如何加载-Java类的"><a href="#Java-虚拟机是如何加载-Java类的" class="headerlink" title="Java 虚拟机是如何加载 Java类的"></a>Java 虚拟机是如何加载 Java类的</h3><p>Java 语言的类型可以分为两大类：基本类型（primitive types）和引用类型（reference types）。</p>
+<p>引用类型，Java 将其细分为四种：类、接口、数组类和泛型参数。由于泛型参数会在编译过程中被擦除，因此 Java 虚拟机实际上只有前三种。在类、接口和数组类中，数组类是由 Java 虚拟机直接生成的，其他两种则有对应的字节流。</p>
+<p>字节流，最常见的形式要属由 Java 编译器生成的 class 文件。</p>
+<p><strong>加载</strong>，是指查找字节流，并且据此创建类的过程。Java 虚拟机则需要借助类加载器来完成查找字节流的过程。启动类加载器。除了启动类加载器之外，其他的类加载器都是 java.lang.ClassLoader 的子类，因此有对应的 Java 对象。在 Java 虚拟机中，这个潜规则有个特别的名字，叫双亲委派模型。每当一个类加载器接收到加载请求时，它会先将请求转发给父类加载器。在父类加载器没有找到所请求的类的情况下，该类加载器才会尝试去加载。</p>
+<p>启动类加载器负责加载最为基础、最为重要的类，比如存放在 JRE 的 lib目录下 jar 包中的类（以及由虚拟机参数 -Xbootclasspath 指定的类）。</p>
+<p>扩展类加载器的父类加载器是启动类加载器。它负责加载相对次要、但又通用的类，比如存放在 JRE 的 lib/ext 目录下 jar 包中的类（以及由系统变量 java.ext.dirs 指定的类）。</p>
+<p>应用类加载器的父类加载器则是扩展类加载器。它负责加载应用程序路径下的类。（这里的应用程序路径，便是指虚拟机参数 -cp/-classpath、系统变量 java.class.path 或环境变量CLASSPATH 所指定的路径。）默认情况下，应用程序中包含的类便是由应用类加载器加载的。</p>
+<p><strong>链接</strong>，是指将创建成的类合并至 Java 虚拟机中，使之能够执行的过程。它可分为验证、准备以及解析三个阶段。</p>
+<p>验证阶段的目的，在于确保被加载类能够满足 Java 虚拟机的约束条件。</p>
+<p>准备阶段的目的，则是为被加载类的静态字段分配内存。Java 代码中对静态字段的具体初始化，则会在稍后的初始化阶段中进行。</p>
+<p>解析阶段的目的，正是将这些符号引用解析成为实际引用。如果符号引用指向一个未被加载的类，或者未被加载类的字段或方法，那么解析将触发这个类的加载（但未必触发这个类的链接以及初始化。）</p>
+<p><strong>初始化</strong>，如果直接赋值的静态字段被 final 所修饰，并且它的类型是基本类型或字符串时，那么该字段便会被 Java 编译器标记成常量值（ConstantValue），其初始化直接由 Java 虚拟机完成。除此之外的直接赋值操作，以及所有静态代码块中的代码，则会被 Java 编译器置于同一方法中，并把它命名为 &lt; clinit &gt;。类加载的最后一步是初始化，便是为标记为常量值的字段赋值，以及执行 &lt; clinit &gt; 方法的过程。Java 虚拟机会通过加锁来确保类的 &lt; clinit &gt; 方法仅被执行一次。</p>
+<p>类的初始化何时会被触发：</p>
+<ol>
+<li><p>当虚拟机启动时，初始化用户指定的主类；</p>
+</li>
+<li><p>当遇到用以新建目标类实例的 new 指令时，初始化 new 指令的目标类；</p>
+</li>
+<li><p>当遇到调用静态方法的指令时，初始化该静态方法所在的类；</p>
+</li>
+<li><p>当遇到访问静态字段的指令时，初始化该静态字段所在的类；</p>
+</li>
+<li><p>子类的初始化会触发父类的初始化；</p>
+</li>
+<li><p>如果一个接口定义了 default 方法，那么直接实现或者间接实现该接口的类的初始化，会触发该接口的初始化；</p>
+</li>
+<li><p>使用反射 API 对某个类进行反射调用时，初始化这个类；</p>
+</li>
+<li><p>当初次调用 MethodHandle 实例时，初始化该 MethodHandle 指向的方法所在的类。</p>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/18/Nginx/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1999,188 +2244,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/15/Git/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chazdada">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chaz Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/12/15/Git/" itemprop="url">Git</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-15T16:02:34+08:00">
-                2019-12-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Git/" itemprop="url" rel="index">
-                    <span itemprop="name">Git</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h2><ul>
-<li><p>.git</p>
-<ul>
-<li><p>object 全增量文件所在地，目录名+里面文件名为全增量的文件名  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git cat-file -p 61ac375fc5565c8a763d942dc599fd34128bdb37</span><br><span class="line">61 目录名 ac375fc5565c8a763d942dc599fd34128bdb37文件名</span><br><span class="line">查看文件内容</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>index文件是暂存区</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git ls-files --stage</span><br><span class="line">查看内容</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>HEAD文件描述了当前分支上 Head 的位置</p>
-</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.email &quot;easychen@gmail.com&quot;</span><br><span class="line">git config --global user.name &quot;Easy&quot;</span><br></pre></td></tr></table></figure>
-
-<p>创建分支并切换</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git branch dev</span><br><span class="line">git checkout dev</span><br></pre></td></tr></table></figure>
-
-<p>git merge 分支合并</p>
-<p>冲突：</p>
-<ul>
-<li>合并失败，运行git merge –abort ，就可以恢复到 merge 之前的状态。</li>
-<li>手动处理冲突</li>
-</ul>
-<p>git log 查看提交日志</p>
-<p>git checkout SHA1 值，我们就可以回到那次提交时的历史。 checkout 后边加上 -b 参数来将其检出为一个全新的分支。</p>
-<h3 id="本地没有仓库"><a href="#本地没有仓库" class="headerlink" title="本地没有仓库"></a>本地没有仓库</h3><p>git clone repo 将远程仓库复制到本地</p>
-<p>git remote 命令，我们可以查看到所有关联到当前仓库的远程仓库</p>
-<p>git remote show (name)命令，我们可以查看某一个远程仓库的详细信息。</p>
-<p>git push 和 git pull 命令，我们可以从服务器端推送和拉取代码。</p>
-<h3 id="本地有仓库"><a href="#本地有仓库" class="headerlink" title="本地有仓库"></a>本地有仓库</h3><p>先在 github 上创建一个空的项目，得到远程仓库地址。然后把它和本地仓库关联起来。</p>
-<p>git init </p>
-<p>git remote add 命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git remote remove origin</span><br><span class="line">git remote add origin2 https://github.com/easychen/litephp.git</span><br><span class="line">git remote show origin2</span><br></pre></td></tr></table></figure>
-
-<p>git pull name branch</p>
-<p>git push name branch</p>
-<p>git stash 将本次修改暂时存入储藏区，并切回到修改之前的版本</p>
-<p>git stash apply ， git 就会自动把之前放到储藏区的最新的那个修改切回来</p>
-<p>git stash list 命令，可以把所有放到储藏区的修改都列出来。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2231,7 +2294,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">32</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
