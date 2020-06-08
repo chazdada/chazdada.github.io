@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[MySQL权限体系]]></title>
+    <url>%2F2020%2F06%2F08%2Fmysql%E6%9D%83%E9%99%90%E4%BD%93%E7%B3%BB%2F</url>
+    <content type="text"><![CDATA[MySQL权限体系MySQL数据库的权限验证相比于Oracle中间添加了一层，及host（从哪里来）。例如：从丙处来的那个甲拥有访问已的权限。 处理逻辑MySQL数据库服务采用的是白名单的权限策略。 能不能连接MySQL首先检查登录用户相关信息，如登录主机名是否匹配，用户名和密码是否正确。这三项对应mysql user表中的user、password和host三列，可以为空“”（不是null）。 能不能执行操作涉及的表： mysql.user mysql.db mysql.tables_priv mysql.columns_priv mysql.proc_priv MySQL服务按照粒度从粗到细的方式。 权限变更失效 通过grant、revoke、set password、rename user，权限马上生效，将触发系统重新载入授权表到内存 手动修改字典表的方式，并不会马上生效 授权表被重新加载后，对当前连接的客户端影响： 表或列粒度将在客户端下次执行操作时 数据库级将在客户端执行use db_name 全局权限和密码修改，下次连接时生效 权限授予与收回创建用户 1234567creat user jss;set password for jss=password(&quot;abc&quot;);设置密码过期，仍可登录，无法进行操作alter user jss password expire;grant select on jssdb.* to jss@&quot;192.168.6.33&quot; identified by &quot;abc&quot;; MySQL用户和主机（”user”@”host”）组成一个唯一账户，并通过该账户进行验证。 mysql启动时会将user表加入内存，会进行排序，按照明确不明确。 手动修改权限字典后，要执行flush privilege语句，重新加载授权信息到内存。 12345grant select on mysql.user to jss_grant@&quot;192.168.6.33&quot;;show grants for jss_grant@&quot;192.168.6.33&quot;；收回权限revoke select on mysql.user from jss_grant@&quot;192.168.6.33&quot;; MySQL数据库中的权限，操作时授予和收回的权限级别必须对应，否则无法成功收回。 12清楚一个用户所有权限revoke all privileges，grant option from user; 删除用户 1drop user user_name; MySQL与oracle不同，MySQL数据库中的对象保存并不是依赖于用户，而依赖库。 权限级别全局 mysql.user 所有数据库的[所有]对象的[所有]权限 grant create *.* to jss_global; 数据库 数据库下[所有]对象的[所有]权限，mysql.db grant create jssdb.* to jss_global; 表 mysql.tables_priv字典表中 列 mysql.columns_priv grant select(col_name) on jssdb.users to jss_global; 账户安全管理 在尽可能不增加应用端开发工作量的前提下，尽可能缩小权限分配粒度 业务级账户分离 操作者在执行sql时所使用的账户与其能够执行操作相对应。 notes： mysql命令行工具执行的所有操作，会被记录到 .mysql_history文件中 1234解决方式1.修改系统层MYSQL_HISTFILE环境变量，改为/dev/null或者2.仍然保留 .mysql_history 文件实际为/dev/null的软链接]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[MySQL库与表]]></title>
     <url>%2F2020%2F06%2F07%2Fmysql%E5%BA%93%E4%B8%8E%E8%A1%A8%2F</url>
     <content type="text"><![CDATA[MySQL库与表数据库mysql数据库（物理概念）像是Oracle中表空间（逻辑概念），mysql数据库中的库跟Oracle数据库中的数据库完全不同。前者数据库是由多个数据库组成，而oracle数据库是一个整体。mysql数据库中的库像是Oracle数据库中的schema（某个用户的模式）。mysql中的schema就是数据库的同义词。 mysql默认四个库 information_schema：记录用户、表、视图等元数据信息，类似于数据字典 mysql：记录用户权限、帮助、日志等信息 performance_schema：mysql服务性能指标库 test：测试库 12show databases; :显示当前连接用户拥有访问权限的数据库drop database [if exists] db_name; 可以在data目录下直接创建文件夹，即可创建数据库。 系统使用sql创建数据库时，默认db.opt内容,不指定的情况下，使用系统变量。 12default-character-set=utf8 #字符集default-collation=utf8_general_ci #校对规则 查看数据库字符集命令： 12show create database db_name;select * from information_schema.schemata; 表用户操作的数据必然保存在某个数据库中的表对象。 12desc tablename; 查看表结构信息show index from mysql.db; 查看索引信息 查看表对象创建脚本 1show create table mysql.db; 修改表结构 123alter table table_name add (col col_deinition);alter table table_name drop col_name;alter table table_name change col_name new_col col_definiton; note: mysql中：varchar和char指定的是字符长度而不是字节长度。 innodb引擎的表对象，每次执行结构的变更都相当于整表的重建。 删除表 对于myisam 存储引擎的表对象，完全可以通过删除操作系统层物理文件的方式删除表 innodb：表对象分为共享表空间方式存储和独立表空间，前者无法通过直接删除的方式 移动表 1rename table tb1_name to new_tb1_name;]]></content>
