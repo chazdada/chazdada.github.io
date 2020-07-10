@@ -375,6 +375,7 @@
         
           
             <h2 id="你真的了解HTTP-吗？-一"><a href="#你真的了解HTTP-吗？-一" class="headerlink" title="你真的了解HTTP 吗？(一)"></a>你真的了解HTTP 吗？(一)</h2><p>要学 HTTP ，先来推荐一个学习网站：</p>
+<p>MDN:<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP" target="_blank" rel="noopener">https://developer.mozilla.org/zh-CN/docs/Web/HTTP</a></p>
 <p>HTTP 是什么？协议格式是怎样的？等这些基础问题，这里就不介绍了。MDN 以及好多博客都介绍的挺全的。这篇文章主要介绍一下HTTP 的连接管理（<em>短连接</em>, <em>长连接</em>, 和 <em>HTTP 流水线</em>）。</p>
 <h3 id="短连接"><a href="#短连接" class="headerlink" title="短连接"></a>短连接</h3><p>HTTP协议被广泛应用于浏览器和服务器架构模式之下。HTTP协议是位于应用层的一种协议，其所使用的传输层协议是TCP协议。TCP是一种可靠传输的协议，浏览器与服务器建立连接过程会经历三次握手过程。</p>
 <p>HTTP 最早期的模型，也是  HTTP/1.0 的默认模型，是短连接。每一个 HTTP 请求都由它自己独立的连接完成；这意味着发起每一个 HTTP 请求之前都会有一次 TCP 握手，而且是连续不断的。</p>
