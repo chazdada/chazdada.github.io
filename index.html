@@ -281,6 +281,161 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/10/Http(一)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chazdada">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chaz Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/07/10/Http(一)/" itemprop="url">你真的了解HTTP吗？(一)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-07-10T17:31:50+08:00">
+                2020-07-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/HTTP/" itemprop="url" rel="index">
+                    <span itemprop="name">HTTP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="你真的了解HTTP-吗？-一"><a href="#你真的了解HTTP-吗？-一" class="headerlink" title="你真的了解HTTP 吗？(一)"></a>你真的了解HTTP 吗？(一)</h2><p>要学 HTTP ，先来推荐一个学习网站：</p>
+<p>HTTP 是什么？协议格式是怎样的？等这些基础问题，这里就不介绍了。MDN 以及好多博客都介绍的挺全的。这篇文章主要介绍一下HTTP 的连接管理（<em>短连接</em>, <em>长连接</em>, 和 <em>HTTP 流水线</em>）。</p>
+<h3 id="短连接"><a href="#短连接" class="headerlink" title="短连接"></a>短连接</h3><p>HTTP协议被广泛应用于浏览器和服务器架构模式之下。HTTP协议是位于应用层的一种协议，其所使用的传输层协议是TCP协议。TCP是一种可靠传输的协议，浏览器与服务器建立连接过程会经历三次握手过程。</p>
+<p>HTTP 最早期的模型，也是  HTTP/1.0 的默认模型，是短连接。每一个 HTTP 请求都由它自己独立的连接完成；这意味着发起每一个 HTTP 请求之前都会有一次 TCP 握手，而且是连续不断的。</p>
+<p>通俗一点的话说就是：我浏览器每次访问一个 URL，浏览器会与服务器建立一个 TCP  连接。浏览器发送完请求然后等待服务返回一个响应。当这一个回合的过程结束后，服务器会断开 TCP 连接。所以浏览器就会知道服务器与我断开连接了，请求结束了。最后浏览器开始渲染页面等工作。</p>
+<p>不用多说，一眼就能看出这种模式的坏处。每请求一次都要重新建立连接，即使一个浏览器都要这样，太麻烦了。ps:三次握手都握麻了。所以怎么办呢？HTTP 1.1 支持长连接模型协议出世了。</p>
+<h3 id="长连接"><a href="#长连接" class="headerlink" title="长连接"></a>长连接</h3><p>HTTP 1.1 使用长连接方式很简单，只要在请求（request） 头部添加<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">在长连接这种方式下，浏览器与服务器建立TCP连接后，不立即断开，而是等待一会看看还有没有别的请求。浏览器会先发送一个请求等待响应，当接收到响应后，再发送另一个请求，等待响应，直到所有请求响应发送接收完毕。</span><br><span class="line"></span><br><span class="line">在这一过程中为了保证浏览器和服务器 TCP连接不断开，会有心跳检测机制。服务器在一段时间没有接收到该连接请求后，也会自动断开，回收资源。</span><br><span class="line"></span><br><span class="line">但是可以发现一个问题是：**在这种回合制的模式下，服务器发给浏览器响应，浏览器怎么知道服务发没发送完呢？**</span><br><span class="line"></span><br><span class="line">两种方式：</span><br><span class="line"></span><br><span class="line">- 对于静态的资源，可以提前知道大小的，我们响应头可以使用```content-length:124```字段。很明显我们就知道了响应消息体的大小。</span><br><span class="line"></span><br><span class="line">- 对于那些动态资源呢？比如传输大量数据，为了整个系统效率，我们不可能把所有资源准备完毕，测出大小来再发送吧。所以有了```Transfer-Encoding:chunked```响应头字段。数据以一系列分块的形式进行发送。 [`Content-Length`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Content-Length) 首部在这种情况下不被发送，发送也会失效。其格式如下：</span><br></pre></td></tr></table></figure></p>
+<p>  HTTP/1.1 200 OK<br>  Content-Type: text/plain<br>  Transfer-Encoding: chunked</p>
+<p>  7\r\n<br>  Mozilla\r\n<br>  9\r\n<br>  Developer\r\n<br>  7\r\n<br>  Network\r\n<br>  0\r\n<br>  \r\n<br>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  当收到```0\r\n \r\n``块时，浏览器就知道了这次响应结束了。</span><br><span class="line"></span><br><span class="line">### 几个开胃小实验</span><br><span class="line"></span><br><span class="line">#### `Transfer-Encoding` 和 `Content-Encoding`对比：</span><br><span class="line"></span><br><span class="line">- Content-Encoding 表示消息体已经采用了的编码方式，比如gzip压缩。 Content-Encoding是&quot;端到端&quot;. </span><br><span class="line">- Transfer-Encoding 是一个[逐跳传输消息首部](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers#hbh)，即仅应用于两个节点之间的消息传递，而不是所请求的资源本身。一个多节点连接中的每一段都可以应用不同的`Transfer-Encoding` 值。</span><br><span class="line"></span><br><span class="line">- 理解一个用于传输报文，是两点之间的，一个是对content内容实际进行的编码。</span><br><span class="line"></span><br><span class="line">#### Transfer-Encoding</span><br><span class="line"></span><br><span class="line">值得注意是给字段可以对应许多值，比如：</span><br></pre></td></tr></table></figure></p>
+<p>Transfer-Encoding: chunked<br>Transfer-Encoding: compress<br>Transfer-Encoding: deflate<br>Transfer-Encoding: gzip<br>Transfer-Encoding: identity</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">在长连接下，除了Transfer-Encoding: identity，其他都会使用分块传输的方式，确定响应大小。</span><br><span class="line"></span><br><span class="line">##### 第一个有趣的实验，当 Nginx 使用 gzip 压缩，然后关闭分块的方式，服务器如何判断大小呢？</span><br><span class="line"></span><br><span class="line">结果：服务器响应完请求后会close，如此浏览器便知道响应结束了。显然，变化为HTTP 1.0 的方式。</span><br><span class="line"></span><br><span class="line">##### 第二个有趣的实验，当 Nginx 关闭 gzip 压缩，服务器如何判断大小呢？</span><br><span class="line"></span><br><span class="line">结果：服务器响应头中包含content-length字段。</span><br><span class="line"></span><br><span class="line">##### 第三个有趣的实验，springboot 长连接响应头是什么样的？</span><br><span class="line"></span><br><span class="line">结果：分块模式</span><br></pre></td></tr></table></figure>
+
+<p>HTTP/1.1 200<br>Content-Type: application/json<br>Transfer-Encoding: chunked<br>Date: Fri, 10 Jul 2020 09:30:56 GMT<br>Keep-Alive: timeout=60<br>Connection: keep-alive<br>```</p>
+<p><em>Note: HTTP 流水线 和 HTTP 2.0 等后续介绍</em></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/08/mysql权限体系/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2007,203 +2162,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/20/并发(三)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chazdada">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Chaz Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/12/20/并发(三)/" itemprop="url">并发(三)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-20T21:11:21+08:00">
-                2019-12-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="并发（三）"><a href="#并发（三）" class="headerlink" title="并发（三）"></a>并发（三）</h2><h3 id="Java线程"><a href="#Java线程" class="headerlink" title="Java线程"></a>Java线程</h3><h4 id="通用线程生命周期"><a href="#通用线程生命周期" class="headerlink" title="通用线程生命周期"></a>通用线程生命周期</h4><p>五态模型：</p>
-<ul>
-<li><strong>初始状态</strong>，指的是线程已经被创建，但是还不允许分配 CPU 执行。这个状态属于编程语<br>言特有的，不过这里所谓的被创建，仅仅是在编程语言层面被创建，而在操作系统层<br>面，真正的线程还没有创建。</li>
-<li><strong>可运行状态</strong>，指的是线程可以分配 CPU 执行。在这种状态下，真正的操作系统线程已经<br>被成功创建了，所以可以分配 CPU 执行。</li>
-<li>当有空闲的 CPU 时，操作系统会将其分配给一个处于可运行状态的线程，被分配到<br>CPU 的线程的状态就转换成了<strong>运行状态</strong>。</li>
-<li>运行状态的线程如果调用一个阻塞的 API（例如以阻塞方式读文件）或者等待某个事件<br>（例如条件变量），那么线程的状态就会转换到<strong>休眠状态</strong>，同时释放 CPU 使用权，休眠<br>状态的线程永远没有机会获得 CPU 使用权。当等待的事件出现了，线程就会从休眠状态<br>转换到可运行状态。</li>
-<li>线程执行完或者出现异常就会进入<strong>终止状态</strong>，终止状态的线程不会切换到其他任何状<br>态，进入终止状态也就意味着线程的生命周期结束了。</li>
-</ul>
-<p>Java 语言里则把可运行状态和运行状态合并</p>
-<h4 id="Java中线程生命周期"><a href="#Java中线程生命周期" class="headerlink" title="Java中线程生命周期"></a>Java中线程生命周期</h4><ul>
-<li>初始状态</li>
-<li>可运行/运行生命状态</li>
-<li>休眠状态<ul>
-<li>BLOCKED<ul>
-<li>线程等待 synchronized 的隐式锁</li>
-<li>线程调用阻塞式 API 时，是不会转换到 BLOCKED 状态，在操作系统层面，线程是会转换到休眠状态的，但是在JVM 层面，Java 线程的状态不会发生变化，也就是说 Java 线程的状态会依然保持RUNNABLE 状态。JVM 层面并不关心操作系统调度相关的状态，因为在 JVM 看来，等待CPU 使用权（操作系统层面此时处于可执行状态）与等待 I/O（操作系统层面此时处于休眠状态）没有区别，都是在等待某个资源，所以都归入了 RUNNABLE 状态。</li>
-</ul>
-</li>
-<li>WAITING<ul>
-<li>获得 synchronized 隐式锁的线程，调用无参数的 Object.wait() 方法</li>
-<li>调用无参数的 Thread.join() 方法</li>
-<li>调用 LockSupport.park() 方法</li>
-</ul>
-</li>
-<li>TIMED-WAITING<ul>
-<li>调用带超时参数的 Thread.sleep(long millis) 方法；</li>
-<li>获得 synchronized 隐式锁的线程，调用带超时参数的 Object.wait(long timeout) 方<br>法；</li>
-<li>调用带超时参数的 Thread.join(long millis) 方法；</li>
-<li>调用带超时参数的 LockSupport.parkNanos(Object blocker, long deadline) 方法；</li>
-<li>调用带超时参数的 LockSupport.parkUntil(long deadline) 方法。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>终止状态<ul>
-<li>stop() 方法会真的杀死线程，不给线程喘息的机会，如果线程持有 ReentrantLock 锁，被<br>stop() 的线程并不会自动调用 ReentrantLock 的 unlock() 去释放锁，那其他线程就再也没<br>机会获得 ReentrantLock 锁，这实在是太危险了。所以该方法就不建议使用了，类似的方<br>法还有 suspend() 和 resume() 方法</li>
-<li>interrupt() 方法仅仅是通知线程，线程有机会执行一些后续操作。当线程处于阻塞状态时被中断，会通过异常的方式通知。</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Thread th = Thread.currentThread();</span><br><span class="line">	<span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span>(th.isInterrupted()) &#123;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 省略业务代码无数</span></span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			Thread.sleep(<span class="number">100</span>);</span><br><span class="line">		&#125;<span class="keyword">catch</span> (InterruptedException e)&#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>线程在sleep期间被打断了，抛出一个InterruptedException异常，try catch捕捉此异常，应该重置一下中断标示，因为抛出异常后，中断标示会自动清除掉！</p>
-<h4 id="线程的数量"><a href="#线程的数量" class="headerlink" title="线程的数量"></a>线程的数量</h4><p>使用多线程的目的：降低延迟，提高吞吐量</p>
-<p>方法：</p>
-<ul>
-<li>算法优化</li>
-<li>将硬件性能发挥到极致，一个是 I/O，一个是 CPU。简言之，在并发编程领域，提升性能本质上就是提升硬件的利用率，再具体点来说，就是提升 I/O的利用率和 CPU 的利用率。</li>
-</ul>
-<p>线程数量设定：</p>
-<ul>
-<li>对于 CPU 密集型计算，多线程本质上是提升多核 CPU 的利用率，所以对于一个 4 核的CPU，每个核一个线程，理论上创建 4 个线程就可以了，再多创建线程也只是增加线程切换的成本。所以，对于 CPU 密集型的计算场景，理论上“线程的数量 =CPU 核数”就是最合适的。不过在工程上，<strong>线程的数量一般会设置为“CPU 核数 +1”</strong>，这样的话，当线程因为偶尔的内存页失效或其他原因导致阻塞时，这个额外的线程可以顶上，从而保证CPU 的利用率。</li>
-<li>对于 I/O 密集型的计算场景，最佳线程数 =CPU 核数 * [ 1 +（I/O 耗时 / CPU 耗时）]</li>
-</ul>
-<h4 id="局部变量不存在线程安全问题"><a href="#局部变量不存在线程安全问题" class="headerlink" title="局部变量不存在线程安全问题"></a>局部变量不存在线程安全问题</h4><p>局部变量在各自的线程栈里</p>
-<p>方法里的局部变量，因为不会和其他线程共享，所以没有并发问题，这个思路很好，已经成为解决并发问题的一个重要技术，同时还有个响当当的名字叫做<strong>线程封闭</strong>，比较官方的解释是：<strong>仅在单线程内访问数据</strong>。由于不存在共享，所以即便不同步也不会有并发问题，性能杠杠的。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2254,7 +2212,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">35</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -2265,7 +2223,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -2276,7 +2234,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
